@@ -20,13 +20,10 @@
      <img alt="GitHub stars" src="https://img.shields.io/github/stars/pmprosociety/authcompanion">
    </a>
    <a href="">
-     <img alt="GitHub license" src="https://img.shields.io/github/license/pmprosociety/authcompanion/">
+     <img alt="GitHub license" src="https://img.shields.io/github/license/pmprosociety/authcompanion" />
    </a>
    <a href="https://deno.land">
      <img src="https://img.shields.io/badge/deno-%5E1.4.5-green?logo=deno"/>
-   </a>
-      <a href="">
-     <img src="https://img.shields.io/badge/postgres-%23316192.svg?&style=for-the-badge&logo=postgresql&logoColor=white" />
    </a>
    <a href="">
      <img src="http://hits.dwyl.com/pmprosociety/authcompanion.svg" />
