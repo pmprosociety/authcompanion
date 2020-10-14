@@ -1,0 +1,33 @@
+# docker-compose for development stack
+version: '3.8'
+
+services:
+  db:
+    image: postgres:latest
+    restart: always
+    environment:
+        POSTGRES_PASSWORD: mydbsecretpwd
+    volumes: 
+        - ./docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
+        - dbdata:/var/lib/postgresql/data
+    ports: 
+        - "5432:5432"
+
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 3000:8080
+
+  api:
+    build: .
+    restart: always
+    depends_on:
+      - db
+    volumes: 
+      - ./:/app
+    ports: 
+      - 3001:3001
+     
+volumes: 
+     dbdata:

@@ -1,0 +1,10 @@
+{
+  "$schema": "https://deno.land/x/denon/schema.json",
+  "scripts": {
+    "start": {
+      "cmd": "deno run -A --unstable bin/server.ts",
+      "desc": "Start AuthCompanion"
+    }
+  }
+}
+
