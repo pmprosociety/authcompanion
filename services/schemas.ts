@@ -11,4 +11,9 @@ const loginSchema = {
   password: [required],
 };
 
-export { loginSchema, registrationSchema };
+const updateSchema = {
+  name: [required],
+  email: [required],
+};
+
+export { loginSchema, registrationSchema, updateSchema };

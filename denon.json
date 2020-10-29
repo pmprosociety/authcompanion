@@ -5,6 +5,11 @@
       "cmd": "deno run -A --unstable bin/server.ts",
       "desc": "Start AuthCompanion"
     }
+  },
+  "watcher": {
+    "exts": ["js", "ts", "json"],
+    "match": ["**/*.*"],
+    "skip": ["*/.git/*"],
+    "legacy": false
   }
-}
-
+} 

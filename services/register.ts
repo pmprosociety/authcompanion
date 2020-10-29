@@ -6,6 +6,7 @@ import { makeAccesstoken, makeRefreshtoken } from "../helpers/jwtutils.ts";
 import { registrationSchema } from "../services/schemas.ts";
 import { db } from "../db/db.ts";
 
+// api/v1/auth/register
 export const register = async (ctx: any) => {
   try {
     if (!ctx.request.hasBody) {
@@ -34,7 +35,7 @@ export const register = async (ctx: any) => {
       email,
     );
 
-    if (userAlreadyExists.rowCount !== 0) {
+    if (userAlreadyExists.rowCount == 0) {
       ctx.throw(
         Status.BadRequest,
         "Unable to process request, please try again",

@@ -5,6 +5,7 @@ import { makeAccesstoken, makeRefreshtoken } from "../helpers/jwtutils.ts";
 import { loginSchema } from "../services/schemas.ts";
 import { db } from "../db/db.ts";
 
+// /api/v1/auth/login
 export const login = async (ctx: any) => {
   try {
     if (!ctx.request.hasBody) {

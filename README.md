@@ -71,11 +71,12 @@ curl --location --request POST 'localhost:3001/api/v1/auth/register' \
 
 ## Features
 
-- [x] **Self-service Login and Registration:** Users can create and sign into accounts using email and password.
-- [ ] **Profile and Credentials Management:** Update passwords, email addresses ect.
+- [x] **Login and Registration:** Users can create and sign into accounts using email and password.
+- [x] **Profile and Credentials Management:** Update password and profile information. 
 - [ ] **Account Recovery:** Restore user access using flows for "Forgot Password" and Security Codes.
 - [ ] **Multi-Factor Authentication:** Supporting TOTP protocols.
 - [ ] **Acount Verifcation:** Verify that a phone number belongs to that identity.
+- [ ] **Admin APIs:** Manage lifecycle operations for a user's status (active/deactive) and JWT tokens
 
 AuthCompanion development is opinionated in nature; taking the path which satisfies the broadest use cases, as securely as possible. We keep the configuration options low in order to make onboarding onto AuthCompanion easy for developers. AuthCompanion ships without HTML Rendering, so you'll need to bring your own UI framework to make use of the feature APIs.
 
