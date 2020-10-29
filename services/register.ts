@@ -77,7 +77,6 @@ export const register = async (ctx: any) => {
         },
       },
     };
-    await db.end();
   } catch (err) {
     console.log(err);
 
@@ -89,5 +88,7 @@ export const register = async (ctx: any) => {
         detail: err.message,
       }],
     };
+  } finally {
+    await db.end();
   }
 };

@@ -67,7 +67,6 @@ export const login = async (ctx: any) => {
           },
         },
       };
-      await db.end();
     } else {
       ctx.throw(
         Status.BadRequest,
@@ -85,5 +84,7 @@ export const login = async (ctx: any) => {
         detail: err.message,
       }],
     };
+  } finally {
+    await db.end();
   }
 };

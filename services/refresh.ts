@@ -56,7 +56,6 @@ export const refresh = async (ctx: any) => {
           },
         },
       };
-      await db.end();
     } else {
       ctx.throw(Status.BadRequest, "Invalid Refresh Token");
     }
@@ -71,5 +70,7 @@ export const refresh = async (ctx: any) => {
         detail: err.message,
       }],
     };
+  } finally {
+    await db.end();
   }
 };
