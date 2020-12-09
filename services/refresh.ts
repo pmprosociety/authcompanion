@@ -14,16 +14,15 @@ export const refresh = async (ctx: any) => {
       ctx.throw(Status.BadRequest, "No Refresh Token Found");
     }
 
-    let validatedRefreshToken = await validateRefreshToken(refreshToken);
-
-    if (validatedRefreshToken.isValid) {
-      let { payload }: any = validatedRefreshToken;
+    let validatedjwt = await validateRefreshToken(refreshToken);
+    
+    if (validatedjwt) {
 
       await db.connect();
 
       const result = await db.query(
         "SELECT * FROM users WHERE refresh_token = $1;",
-        payload.jti,
+        validatedjwt?.payload.jti,
       );
 
       if (result.rowCount == 0) {
@@ -60,9 +59,9 @@ export const refresh = async (ctx: any) => {
       ctx.throw(Status.BadRequest, "Invalid Refresh Token");
     }
   } catch (err) {
-    console.log(err.message);
+    console.log(err.status);
 
-    ctx.response.status = err.status;
+    ctx.response.status = err.status | 400;
     ctx.response.type = "json";
     ctx.response.body = {
       errors: [{
@@ -71,6 +70,5 @@ export const refresh = async (ctx: any) => {
       }],
     };
   } finally {
-    await db.end();
   }
 };

@@ -35,7 +35,7 @@ export const register = async (ctx: any) => {
       email,
     );
 
-    if (userAlreadyExists.rowCount == 0) {
+    if (userAlreadyExists.rowCount !== 0) {
       ctx.throw(
         Status.BadRequest,
         "Unable to process request, please try again",
@@ -78,9 +78,8 @@ export const register = async (ctx: any) => {
       },
     };
   } catch (err) {
-    console.log(err);
 
-    ctx.response.status = err.status;
+    ctx.response.status = err.status | 400;
     ctx.response.type = "json";
     ctx.response.body = {
       errors: [{
@@ -89,6 +88,5 @@ export const register = async (ctx: any) => {
       }],
     };
   } finally {
-    await db.end();
   }
 };

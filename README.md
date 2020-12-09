@@ -92,4 +92,5 @@ AuthCompanion is licensed under the [MIT](https://opensource.org/licenses/MIT) l
 
 ## Contributions
 Author: Paul Fischer [(Github)](https://github.com/pmprosociety)
+
 Logo Design - Timothy Reeder [(Github)](https://github.com/tokonoma)

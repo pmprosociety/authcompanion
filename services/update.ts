@@ -106,7 +106,7 @@ export const updateUser = async (ctx: any) => {
     }
   } catch (err) {
     console.log(err);
-    ctx.response.status = err.status;
+    ctx.response.status = err.status | 400;
     ctx.response.type = "json";
     ctx.response.body = {
       errors: [{
@@ -115,6 +115,5 @@ export const updateUser = async (ctx: any) => {
       }],
     };
   } finally {
-    await db.end();
   }
 };

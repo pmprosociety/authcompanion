@@ -1,5 +1,5 @@
 import { Status } from "../deps.ts";
-import { validateJwt } from "../deps.ts";
+import { verify } from "../deps.ts";
 import { config } from "../deps.ts";
 
 const env = config();
@@ -14,7 +14,7 @@ export default async (ctx: any, next: any) => {
     const jwt = authHeader.split(" ")[1];
     const key = env.ACCESSTOKENKEY;
 
-    const payloadToken = await validateJwt({ jwt, key, algorithm: "HS256" });
+    const payloadToken = await verify(jwt, key, "HS256");
     if (payloadToken.isValid) {
       await next();
     } else {

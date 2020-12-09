@@ -9,14 +9,14 @@ import { db } from "../db/db.ts";
 export const login = async (ctx: any) => {
   try {
     if (!ctx.request.hasBody) {
-      ctx.throw(Status.BadRequest, "Bad Request");
+      ctx.throw(Status.BadRequest, "Bad Request, No Request Body");
     }
 
     let body = await ctx.request.body();
     let bodyValue = await body.value;
 
     if (body.type !== "json") {
-      ctx.throw(Status.BadRequest, "Bad Request");
+      ctx.throw(Status.BadRequest, "Bad Request, Incorrect Body Type");
     }
 
     //validate body schema
@@ -43,7 +43,10 @@ export const login = async (ctx: any) => {
     const user = objectRows[0];
 
     if (!user.isactive) {
-      ctx.throw(Status.Forbidden, "Bad Request, Please Retry Login");
+      ctx.throw(
+        Status.Forbidden,
+        "Bad Request, Please Retry Login",
+      );
     }
 
     if (await compare(password, user.password)) {
@@ -76,7 +79,7 @@ export const login = async (ctx: any) => {
   } catch (err) {
     console.log(err);
 
-    ctx.response.status = err.status;
+    ctx.response.status = err.status | 400;
     ctx.response.type = "json";
     ctx.response.body = {
       errors: [{
@@ -85,6 +88,5 @@ export const login = async (ctx: any) => {
       }],
     };
   } finally {
-    await db.end();
   }
 };

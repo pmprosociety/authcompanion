@@ -1,5 +1,5 @@
-import { Jose, makeJwt, Payload, setExpiration } from "../deps.ts";
-import { validateJwt } from "../deps.ts";
+import { create, getNumericDate, verify, decode } from "../deps.ts";
+import { Header, Payload } from "../deps.ts";
 import { config } from "../deps.ts";
 import { v4 } from "../deps.ts";
 
@@ -16,18 +16,18 @@ export async function makeAccesstoken(result: any) {
   const objectRows = result.rowsOfObjects();
   const user = objectRows[0];
 
-  const header: Jose = { alg: "HS256", typ: "JWT" };
-  const payload: Payload = {
+  const jwtheader: Header = { alg: "HS256", typ: "JWT" };
+  const jwtpayload: Payload = {
     name: user.name,
     email: user.email,
-    exp: setExpiration(date),
+    exp: getNumericDate(date),
   };
 
-  const resultingToken = await makeJwt({ header, payload, key });
+  const resultingToken = await create(jwtheader, jwtpayload, key);
 
   const responseObj = {
     token: resultingToken,
-    expiration: payload.exp,
+    expiration: jwtpayload.exp,
   };
 
   return responseObj;
@@ -50,19 +50,30 @@ export async function makeRefreshtoken(result: any) {
     user.refresh_token,
   );
 
-  const header: Jose = { alg: "HS256", typ: "JWT" };
-  const payload: Payload = {
+  const jwtheader: Header = { alg: "HS256", typ: "JWT" };
+  const jwtpayload: Payload = {
     name: user.name,
     email: user.email,
     jti: newjtiClaim,
-    exp: setExpiration(date),
+    exp: getNumericDate(date),
   };
 
-  return await makeJwt({ header, payload, key });
+  return await create(jwtheader, jwtpayload, key);
 }
 
 export async function validateRefreshToken(jwt: any) {
   const key = env.REFRESHTOKENKEY;
+  try {
+    //verify the jwt
+    await verify(jwt, key, "HS256");
 
-  return await validateJwt({ jwt, key, algorithm: "HS256" });
+    //decode the jwt
+    let validatedToken = await decode(jwt)
+
+    return validatedToken;
+
+  } catch (err) {
+     console.log(err);
+     throw new Error('Reresh Token is Invalid');
+  }
 }
