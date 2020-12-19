@@ -2,11 +2,14 @@ import { Status } from "../deps.ts";
 import { hash } from "../deps.ts";
 import { validate } from "../deps.ts";
 import { v4 } from "../deps.ts";
-import { makeAccesstoken, makeRefreshtoken } from "../helpers/jwtutils.ts";
+import {
+  decodeJWT,
+  makeAccesstoken,
+  makeRefreshtoken,
+} from "../helpers/jwtutils.ts";
 import { updateSchema } from "../services/schemas.ts";
 import { db } from "../db/db.ts";
 
-// api/v1/auth/update/me
 // All profile properties must be specified when updating a user's profile with POST
 // Sending password field is optional
 export const updateUser = async (ctx: any) => {
@@ -28,13 +31,18 @@ export const updateUser = async (ctx: any) => {
       ctx.throw(Status.BadRequest, errors);
     }
 
+    const authHeader = ctx.request.headers.get("authorization");
+    const userJWT = authHeader.split(" ")[1];
+
+    let { payload } = await decodeJWT(userJWT);
+
     const { name, email, password } = bodyValue;
 
     await db.connect();
 
     const userObj = await db.query(
       "SELECT * FROM users WHERE email = $1;",
-      email,
+      payload.email,
     );
 
     if (userObj.rowCount == 0) {
@@ -49,11 +57,12 @@ export const updateUser = async (ctx: any) => {
       const jtiClaim = v4.generate();
 
       const result = await db.query(
-        "Update users SET name = $1, email = $2, password = $3, refresh_token = $4 WHERE email = $2 RETURNING *;",
+        "Update users SET name = $1, email = $2, password = $3, refresh_token = $4 WHERE email = $5 RETURNING *;",
         name,
         email,
         hashpassword,
         jtiClaim,
+        payload.email,
       );
 
       const objectRows = result.rowsOfObjects();
@@ -62,7 +71,7 @@ export const updateUser = async (ctx: any) => {
       const accessToken = await makeAccesstoken(result);
       const refreshToken = await makeRefreshtoken(result);
 
-      ctx.response.status = Status.Created;
+      ctx.response.status = Status.OK;
       ctx.cookies.set("refreshToken", refreshToken, {
         httpOnly: true,
         expires: new Date("2022-01-01T00:00:00+00:00"),
@@ -74,12 +83,13 @@ export const updateUser = async (ctx: any) => {
           attributes: {
             name: user.name,
             email: user.email,
-            created_at: user.created_at,
+            updated_at: user.updated_at,
             access_token: accessToken.token,
             access_token_expiry: accessToken.expiration,
           },
         },
       };
+      await db.end();
     } else {
       const result = await db.query(
         "UPDATE users SET name = $1, email = $2 WHERE email = $2 RETURNING *;",
@@ -90,6 +100,14 @@ export const updateUser = async (ctx: any) => {
       const objectRows = result.rowsOfObjects();
       const user = objectRows[0];
 
+      const accessToken = await makeAccesstoken(result);
+      const refreshToken = await makeRefreshtoken(result);
+
+      ctx.response.status = Status.OK;
+      ctx.cookies.set("refreshToken", refreshToken, {
+        httpOnly: true,
+        expires: new Date("2022-01-01T00:00:00+00:00"),
+      });
       ctx.response.status = Status.OK;
       ctx.response.body = {
         data: {
@@ -98,11 +116,13 @@ export const updateUser = async (ctx: any) => {
           attributes: {
             name: user.name,
             email: user.email,
-            created_at: user.created_at,
             updated_at: user.updated_at,
+            access_token: accessToken.token,
+            access_token_expiry: accessToken.expiration,
           },
         },
       };
+      await db.end();
     }
   } catch (err) {
     console.log(err);

@@ -37,6 +37,7 @@ export const login = async (ctx: any) => {
 
     if (result.rowCount == 0) {
       ctx.throw(Status.BadRequest, "Bad Request, Please Retry Login");
+      await db.end();
     }
 
     const objectRows = result.rowsOfObjects();
@@ -47,6 +48,7 @@ export const login = async (ctx: any) => {
         Status.Forbidden,
         "Bad Request, Please Retry Login",
       );
+      await db.end();
     }
 
     if (await compare(password, user.password)) {
@@ -70,11 +72,13 @@ export const login = async (ctx: any) => {
           },
         },
       };
+      await db.end();
     } else {
       ctx.throw(
         Status.BadRequest,
         "Username or Password is Invalid, Please Retry Login",
       );
+      await db.end();
     }
   } catch (err) {
     console.log(err);

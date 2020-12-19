@@ -15,9 +15,8 @@ export const refresh = async (ctx: any) => {
     }
 
     let validatedjwt = await validateRefreshToken(refreshToken);
-    
-    if (validatedjwt) {
 
+    if (validatedjwt) {
       await db.connect();
 
       const result = await db.query(
@@ -27,6 +26,7 @@ export const refresh = async (ctx: any) => {
 
       if (result.rowCount == 0) {
         ctx.throw(Status.BadRequest, "Invalid Refresh Token");
+        await db.end();
       }
 
       const objectRows = result.rowsOfObjects();
@@ -34,6 +34,7 @@ export const refresh = async (ctx: any) => {
 
       if (!user.isactive) {
         ctx.throw(Status.Forbidden, "User has been disabled");
+        await db.end();
       }
 
       const accessToken = await makeAccesstoken(result);
@@ -55,6 +56,7 @@ export const refresh = async (ctx: any) => {
           },
         },
       };
+      await db.end();
     } else {
       ctx.throw(Status.BadRequest, "Invalid Refresh Token");
     }

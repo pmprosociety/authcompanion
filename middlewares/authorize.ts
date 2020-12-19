@@ -1,29 +1,31 @@
 import { Status } from "../deps.ts";
-import { verify } from "../deps.ts";
-import { config } from "../deps.ts";
-
-const env = config();
+import { validateJWT } from "../helpers/jwtutils.ts";
 
 export default async (ctx: any, next: any) => {
-  const authHeader = ctx.request.headers.get("authorization");
-
-  if (!authHeader) {
-    ctx.throw(Status.Unauthorized, "Unauthorized");
-  }
   try {
-    const jwt = authHeader.split(" ")[1];
-    const key = env.ACCESSTOKENKEY;
+    const authHeader = ctx.request.headers.get("authorization");
+    const userJWT = authHeader.split(" ")[1];
 
-    const payloadToken = await verify(jwt, key, "HS256");
-    if (payloadToken.isValid) {
-      await next();
-    } else {
-      ctx.throw(Status.Unauthorized, "Token Invalid, Please Login");
+    if (!authHeader) {
+      ctx.throw(Status.Unauthorized, "Unauthorized");
     }
-  } catch (err) {
-    const status = err.status;
 
+    if (!userJWT) {
+      ctx.throw(Status.Unauthorized, "Unauthorized");
+    }
+
+    await validateJWT(userJWT);
+
+    await next();
+  } catch (err) {
     console.log(err);
-    ctx.throw(status, err.message);
+    ctx.response.status = err.status | 400;
+    ctx.response.type = "json";
+    ctx.response.body = {
+      errors: [{
+        title: "Server Error",
+        detail: err.message,
+      }],
+    };
   }
 };

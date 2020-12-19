@@ -1,4 +1,4 @@
-import { create, getNumericDate, verify, decode } from "../deps.ts";
+import { create, decode, getNumericDate, verify } from "../deps.ts";
 import { Header, Payload } from "../deps.ts";
 import { config } from "../deps.ts";
 import { v4 } from "../deps.ts";
@@ -68,12 +68,39 @@ export async function validateRefreshToken(jwt: any) {
     await verify(jwt, key, "HS256");
 
     //decode the jwt
-    let validatedToken = await decode(jwt)
+    let validatedToken = await decode(jwt);
 
     return validatedToken;
-
   } catch (err) {
-     console.log(err);
-     throw new Error('Reresh Token is Invalid');
+    console.log(err);
+    throw new Error("Reresh Token is Invalid");
+  }
+}
+
+export async function validateJWT(jwt: any) {
+  const key = env.ACCESSTOKENKEY;
+  try {
+    //verify the jwt (includes signature validation) otherwise throw error
+    await verify(jwt, key, "HS256");
+
+    //decode the jwt (without signature verfication) otherwise throw error
+    let validatedToken = await decode(jwt);
+
+    return validatedToken;
+  } catch (err) {
+    console.log(err);
+    throw new Error("Access Token is Invalid");
+  }
+}
+
+export async function decodeJWT(jwt: any) {
+  try {
+    //decode the jwt (without signature verfication) otherwise throw error
+    let validatedToken = await decode(jwt);
+
+    return validatedToken;
+  } catch (err) {
+    console.log(err);
+    throw new Error("Access Token Could Not Be Decoded");
   }
 }

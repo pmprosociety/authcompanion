@@ -40,6 +40,7 @@ export const register = async (ctx: any) => {
         Status.BadRequest,
         "Unable to process request, please try again",
       );
+      await db.end();
     }
 
     const hashpassword = await hash(password);
@@ -77,8 +78,8 @@ export const register = async (ctx: any) => {
         },
       },
     };
+    await db.end();
   } catch (err) {
-
     ctx.response.status = err.status | 400;
     ctx.response.type = "json";
     ctx.response.body = {
