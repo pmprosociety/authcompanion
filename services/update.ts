@@ -3,15 +3,12 @@ import { hash } from "../deps.ts";
 import { validate } from "../deps.ts";
 import { v4 } from "../deps.ts";
 import {
-  decodeJWT,
   makeAccesstoken,
   makeRefreshtoken,
 } from "../helpers/jwtutils.ts";
 import { updateSchema } from "../services/schemas.ts";
 import { db } from "../db/db.ts";
 
-// All profile properties must be specified when updating a user's profile with POST
-// Sending password field is optional
 export const updateUser = async (ctx: any) => {
   try {
     if (!ctx.request.hasBody) {
@@ -31,18 +28,13 @@ export const updateUser = async (ctx: any) => {
       ctx.throw(Status.BadRequest, errors);
     }
 
-    const authHeader = ctx.request.headers.get("authorization");
-    const userJWT = authHeader.split(" ")[1];
-
-    let { payload } = await decodeJWT(userJWT);
-
     const { name, email, password } = bodyValue;
 
     await db.connect();
 
     const userObj = await db.query(
       "SELECT * FROM users WHERE email = $1;",
-      payload.email,
+      ctx.state.JWTclaims.email,
     );
 
     if (userObj.rowCount == 0) {
@@ -62,7 +54,7 @@ export const updateUser = async (ctx: any) => {
         email,
         hashpassword,
         jtiClaim,
-        payload.email,
+        ctx.state.JWTclaims.email,
       );
 
       const objectRows = result.rowsOfObjects();
@@ -92,9 +84,10 @@ export const updateUser = async (ctx: any) => {
       await db.end();
     } else {
       const result = await db.query(
-        "UPDATE users SET name = $1, email = $2 WHERE email = $2 RETURNING *;",
+        "UPDATE users SET name = $1, email = $2 WHERE email = $3 RETURNING *;",
         name,
         email,
+        ctx.state.JWTclaims.email,
       );
 
       const objectRows = result.rowsOfObjects();

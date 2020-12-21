@@ -14,7 +14,9 @@ export default async (ctx: any, next: any) => {
       ctx.throw(Status.Unauthorized, "Unauthorized");
     }
 
-    await validateJWT(userJWT);
+    let { payload } = await validateJWT(userJWT);
+    ctx.state.authenticated = true;
+    ctx.state.JWTclaims = payload;
 
     await next();
   } catch (err) {
