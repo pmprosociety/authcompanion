@@ -4,6 +4,7 @@ import { validate } from "../deps.ts";
 import { makeAccesstoken, makeRefreshtoken } from "../helpers/jwtutils.ts";
 import { loginSchema } from "../services/schemas.ts";
 import { db } from "../db/db.ts";
+import log from "../helpers/log.ts";
 
 // /api/v1/auth/login
 export const login = async (ctx: any) => {
@@ -81,7 +82,7 @@ export const login = async (ctx: any) => {
       await db.end();
     }
   } catch (err) {
-    console.log(err);
+    log.error(err);
 
     ctx.response.status = err.status | 400;
     ctx.response.type = "json";

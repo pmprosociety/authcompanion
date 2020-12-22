@@ -5,6 +5,7 @@ import { v4 } from "../deps.ts";
 import { makeAccesstoken, makeRefreshtoken } from "../helpers/jwtutils.ts";
 import { registrationSchema } from "../services/schemas.ts";
 import { db } from "../db/db.ts";
+import log from "../helpers/log.ts";
 
 // api/v1/auth/register
 export const register = async (ctx: any) => {
@@ -80,6 +81,8 @@ export const register = async (ctx: any) => {
     };
     await db.end();
   } catch (err) {
+    log.error(err);
+
     ctx.response.status = err.status | 400;
     ctx.response.type = "json";
     ctx.response.body = {

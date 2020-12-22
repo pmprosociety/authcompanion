@@ -5,6 +5,7 @@ import {
   validateRefreshToken,
 } from "../helpers/jwtutils.ts";
 import { db } from "../db/db.ts";
+import log from '../helpers/log.ts';
 
 export const refresh = async (ctx: any) => {
   try {
@@ -61,7 +62,7 @@ export const refresh = async (ctx: any) => {
       ctx.throw(Status.BadRequest, "Invalid Refresh Token");
     }
   } catch (err) {
-    console.log(err.status);
+    log.error(err);
 
     ctx.response.status = err.status | 400;
     ctx.response.type = "json";
