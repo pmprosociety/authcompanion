@@ -2,13 +2,10 @@ import { Status } from "../deps.ts";
 import { hash } from "../deps.ts";
 import { validate } from "../deps.ts";
 import { v4 } from "../deps.ts";
-import {
-  makeAccesstoken,
-  makeRefreshtoken,
-} from "../helpers/jwtutils.ts";
+import { makeAccesstoken, makeRefreshtoken } from "../helpers/jwtutils.ts";
 import { updateSchema } from "./schemas.ts";
 import { db } from "../db/db.ts";
-import log from '../helpers/log.ts';
+import log from "../helpers/log.ts";
 
 export const updateUser = async (ctx: any) => {
   try {

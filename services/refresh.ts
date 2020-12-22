@@ -5,7 +5,7 @@ import {
   validateRefreshToken,
 } from "../helpers/jwtutils.ts";
 import { db } from "../db/db.ts";
-import log from '../helpers/log.ts';
+import log from "../helpers/log.ts";
 
 export const refresh = async (ctx: any) => {
   try {
