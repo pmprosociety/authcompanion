@@ -82,8 +82,6 @@ AuthCompanion fulfills the most common identity and user management needs for we
 - [x] **Login and Registration:** Users can create and sign into accounts using email and password. Data is stored in a Postgres environment.
 - [x] **Profile and Credentials Management:** Update password and profile information using RESTful APIs. 
 - [ ] **Account Recovery:** Restore user access using flows for "Forgot Password" and Security Codes. Email is used as the user notification mechanism. 
-- [ ] **Multi-Factor Authentication:** Supporting TOTP protocols via email.
-- [ ] **Account Verification:** Verify that an email belongs to that identity, easily. 
 - [ ] **Admin APIs:** Manage lifecycle operations for a user's status (active/deactive) and manage the JWT tokens lifecycle to ensure users are authenticated before using your app. 
 
 AuthCompanion ships without HTML Rendering, so you'll need to bring your own UI framework to make use of the feature APIs.
