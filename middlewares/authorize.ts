@@ -1,5 +1,6 @@
 import { Status } from "../deps.ts";
 import { validateJWT } from "../helpers/jwtutils.ts";
+import log from "../helpers/log.ts";
 
 export default async (ctx: any, next: any) => {
   try {
@@ -7,10 +8,12 @@ export default async (ctx: any, next: any) => {
     const userJWT = authHeader.split(" ")[1];
 
     if (!authHeader) {
+      log.debug("Missing Authentication header");
       ctx.throw(Status.Unauthorized, "Unauthorized");
     }
 
     if (!userJWT) {
+      log.debug("Missing valid JWT in Authentication header");
       ctx.throw(Status.Unauthorized, "Unauthorized");
     }
 
@@ -20,7 +23,7 @@ export default async (ctx: any, next: any) => {
 
     await next();
   } catch (err) {
-    console.log(err);
+    log.warning(err);
     ctx.response.status = err.status | 400;
     ctx.response.type = "json";
     ctx.response.body = {

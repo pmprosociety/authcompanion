@@ -2,16 +2,15 @@ import { Status } from "../deps.ts";
 import { hash } from "../deps.ts";
 import { validate } from "../deps.ts";
 import { v4 } from "../deps.ts";
-import {
-  makeAccesstoken,
-  makeRefreshtoken,
-} from "../helpers/jwtutils.ts";
-import { updateSchema } from "../services/schemas.ts";
+import { makeAccesstoken, makeRefreshtoken } from "../helpers/jwtutils.ts";
+import { updateSchema } from "./schemas.ts";
 import { db } from "../db/db.ts";
+import log from "../helpers/log.ts";
 
 export const updateUser = async (ctx: any) => {
   try {
     if (!ctx.request.hasBody) {
+      log.debug("Request has no body");
       ctx.throw(Status.BadRequest, "Bad Request");
     }
 
@@ -19,12 +18,14 @@ export const updateUser = async (ctx: any) => {
     let bodyValue = await body.value;
 
     if (body.type !== "json") {
+      log.debug("Request is not JSON");
       ctx.throw(Status.BadRequest, "Bad Request");
     }
 
     const [passes, errors] = await validate(bodyValue, updateSchema);
 
     if (!passes) {
+      log.debug("Request did not pass validation");
       ctx.throw(Status.BadRequest, errors);
     }
 
@@ -38,6 +39,7 @@ export const updateUser = async (ctx: any) => {
     );
 
     if (userObj.rowCount == 0) {
+      log.warning("Unable to find user to update");
       ctx.throw(
         Status.BadRequest,
         "Unable to process request, please try again",
@@ -118,7 +120,7 @@ export const updateUser = async (ctx: any) => {
       await db.end();
     }
   } catch (err) {
-    console.log(err);
+    log.error(err);
     ctx.response.status = err.status | 400;
     ctx.response.type = "json";
     ctx.response.body = {

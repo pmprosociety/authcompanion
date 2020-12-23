@@ -4,6 +4,7 @@ import { config } from "../deps.ts";
 import { v4 } from "../deps.ts";
 
 import { db } from "../db/db.ts";
+import log from "./log.ts";
 
 const env = config();
 
@@ -72,7 +73,7 @@ export async function validateRefreshToken(jwt: any) {
 
     return validatedToken;
   } catch (err) {
-    console.log(err);
+    log.warning(err);
     throw new Error("Reresh Token is Invalid");
   }
 }
@@ -88,19 +89,7 @@ export async function validateJWT(jwt: any) {
 
     return validatedToken;
   } catch (err) {
-    console.log(err);
+    log.warning(err);
     throw new Error("Access Token is Invalid");
-  }
-}
-
-export async function decodeJWT(jwt: any) {
-  try {
-    //decode the jwt (without signature verfication) otherwise throw error
-    let validatedToken = await decode(jwt);
-
-    return validatedToken;
-  } catch (err) {
-    console.log(err);
-    throw new Error("Access Token Could Not Be Decoded");
   }
 }
