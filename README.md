@@ -23,7 +23,7 @@
      <img alt="GitHub license" src="https://img.shields.io/github/license/pmprosociety/authcompanion" />
    </a>
    <a href="https://deno.land">
-     <img src="https://img.shields.io/badge/deno-%5E1.5.2-green?logo=deno"/>
+     <img src="https://img.shields.io/badge/deno-1.5.2-green?logo=deno"/>
    </a>
 
 </div>
@@ -66,18 +66,27 @@ curl --location --request POST 'localhost:3001/api/v1/auth/register' \
 --data-raw '{"name": "Authy Man", "email": "authy.man@authcompanion.com", "password": "supersecretpass"}'
 ```
 
+## Who is this for?
+
+AuthCompanion’s development is opinionated.  That means the default configuration should be secure, sane and ready for production.  Configuration changes are kept to a minimum, ensuring that Authcompanion can start-up quickly and run smoothly in any environment - without having to study the docs for hours. 
+
+We aim to keep complexity to the minimum.  If you are interested in a new feature please open an issue to discuss it BEFORE starting work.  We want to make sure any new features align to our core tenants of simplicity and ease of use.
+
+AuthCompanion is a base template for user management which helps you build web application prototypes FASTER.  
+
+Take AuthCompanion, the useful sidekick, into your next web project! 👏
+
 ## Features
+AuthCompanion fulfills the most common identity and user management needs for web applications, including:
 
-- [x] **Login and Registration:** Users can create and sign into accounts using email and password.
-- [x] **Profile and Credentials Management:** Update password and profile information. 
-- [ ] **Account Recovery:** Restore user access using flows for "Forgot Password" and Security Codes.
-- [ ] **Multi-Factor Authentication:** Supporting TOTP protocols.
-- [ ] **Acount Verifcation:** Verify that a phone number belongs to that identity.
-- [ ] **Admin APIs:** Manage lifecycle operations for a user's status (active/deactive) and JWT tokens
+- [x] **Login and Registration:** Users can create and sign into accounts using email and password. Data is stored in a Postgres environment.
+- [x] **Profile and Credentials Management:** Update password and profile information using RESTful APIs. 
+- [ ] **Account Recovery:** Restore user access using flows for "Forgot Password" and Security Codes. Email is used as the user notification mechanism. 
+- [ ] **Multi-Factor Authentication:** Supporting TOTP protocols via email.
+- [ ] **Account Verification:** Verify that an email belongs to that identity, easily. 
+- [ ] **Admin APIs:** Manage lifecycle operations for a user's status (active/deactive) and manage the JWT tokens lifecycle to ensure users are authenticated before using your app. 
 
-AuthCompanion development is opinionated in nature; taking the path which satisfies the broadest use cases, as securely as possible. We keep the configuration options low in order to make onboarding onto AuthCompanion easy for developers. AuthCompanion ships without HTML Rendering, so you'll need to bring your own UI framework to make use of the feature APIs.
-
-Take this useful sidekick into your next project! 👏
+AuthCompanion ships without HTML Rendering, so you'll need to bring your own UI framework to make use of the feature APIs.
 
 ## Related Readings
 
@@ -88,6 +97,6 @@ Take this useful sidekick into your next project! 👏
 AuthCompanion is licensed under the [MIT](https://opensource.org/licenses/MIT) license.
 
 ## Contributions
-Author: Paul Fischer [(Github)](https://github.com/pmprosociety)
+Author: Paul Fischer [(Github)](https://github.com/pmprosociety), Teddy Schmitz [(Github)](https://github.com/Teddy-Schmitz)
 
 Logo Design - Timothy Reeder [(Github)](https://github.com/tokonoma)
