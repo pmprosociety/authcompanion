@@ -18,8 +18,8 @@ router
   .post("auth/register", register)
   .post("auth/login", login)
   .post("auth/refresh", refresh)
-  .post("auth/users/me", authorize, updateUser)
   .post("auth/recovery", recoverUser)
-  .post("auth/recovery/token", recoverToken);
+  .post("auth/recovery/token", recoverToken)
+  .post("auth/users/me", authorize, updateUser);
 
 export default router;

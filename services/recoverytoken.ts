@@ -2,7 +2,6 @@ import { Status } from "../deps.ts";
 import { validate } from "../deps.ts";
 import {
   makeAccesstoken,
-  makeRecoverytoken,
   makeRefreshtoken,
   validateJWT,
 } from "../helpers/jwtutils.ts";
@@ -35,35 +34,36 @@ export const recoverToken = async (ctx: any) => {
     const { token } = bodyValue;
 
     //if the request has a valid recovery token, issue new access token
-    if (token) {
-      let validatedtoken = await validateJWT(token);
+    let validatedtoken = await validateJWT(token);
 
-      const userObj = await db.query(
-        "SELECT * FROM users WHERE email = $1;",
-        validatedtoken.payload.email,
-      );
+    await db.connect();
 
-      const accessToken = await makeAccesstoken(userObj);
-      const refreshToken = await makeRefreshtoken(userObj);
+    const userObj = await db.query(
+      "SELECT * FROM users WHERE email = $1;",
+      validatedtoken.payload.email,
+    );
 
-      ctx.response.status = Status.OK;
-      ctx.cookies.set("refreshToken", refreshToken, {
-        httpOnly: true,
-        expires: new Date("2022-01-01T00:00:00+00:00"),
-      });
-      ctx.response.body = {
-        data: {
-          id: validatedtoken.payload.id,
-          type: "Recovery Login",
-          attributes: {
-            name: validatedtoken.payload.name,
-            email: validatedtoken.payload.email,
-            access_token: accessToken.token,
-            access_token_expiry: accessToken.expiration,
-          },
+    const accessToken = await makeAccesstoken(userObj);
+    const refreshToken = await makeRefreshtoken(userObj);
+
+    ctx.response.status = Status.OK;
+    ctx.cookies.set("refreshToken", refreshToken, {
+      httpOnly: true,
+      expires: new Date("2022-01-01T00:00:00+00:00"),
+    });
+    ctx.response.body = {
+      data: {
+        id: validatedtoken.payload.id,
+        type: "Recovery Login",
+        attributes: {
+          name: validatedtoken.payload.name,
+          email: validatedtoken.payload.email,
+          access_token: accessToken.token,
+          access_token_expiry: accessToken.expiration,
         },
-      };
-    }
+      },
+    };
+    await db.end();
   } catch (err) {
     log.error(err);
     ctx.response.status = err.status | 400;

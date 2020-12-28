@@ -1,11 +1,6 @@
 import { Status } from "../deps.ts";
 import { validate } from "../deps.ts";
-import {
-  makeAccesstoken,
-  makeRecoverytoken,
-  makeRefreshtoken,
-  validateJWT,
-} from "../helpers/jwtutils.ts";
+import { makeRecoverytoken } from "../helpers/jwtutils.ts";
 import { recoverySchema } from "./schemas.ts";
 import { db } from "../db/db.ts";
 import log from "../helpers/log.ts";
