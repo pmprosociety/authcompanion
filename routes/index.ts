@@ -4,6 +4,7 @@ import { refresh } from "../services/refresh.ts";
 import { register } from "../services/register.ts";
 import { updateUser } from "../services/update.ts";
 import { recoverUser } from "../services/recovery.ts";
+import { recoverToken } from "../services/recoveryToken.ts";
 
 import authorize from "../middlewares/authorize.ts";
 
@@ -18,6 +19,7 @@ router
   .post("auth/login", login)
   .post("auth/refresh", refresh)
   .post("auth/users/me", authorize, updateUser)
-  .post("auth/recovery", authorize, recoverUser);
+  .post("auth/recovery", recoverUser)
+  .post("auth/recovery/token", recoverToken);
 
 export default router;

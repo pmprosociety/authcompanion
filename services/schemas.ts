@@ -20,4 +20,14 @@ const recoverySchema = {
   email: [required],
 };
 
-export { loginSchema, recoverySchema, registrationSchema, updateSchema };
+const recoverytokenSchema = {
+  token: [required],
+};
+
+export {
+  loginSchema,
+  recoverySchema,
+  recoverytokenSchema,
+  registrationSchema,
+  updateSchema,
+};

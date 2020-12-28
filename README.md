@@ -79,9 +79,9 @@ Take AuthCompanion, the useful sidekick, into your next web project! 👏
 ## Features
 AuthCompanion fulfills the most common identity and user management needs for web applications, including:
 
-- [x] **Login and Registration:** Users can create and sign into accounts using email and password. Data is stored in a Postgres environment.
+- [x] **Login and Registration:** Users can create and sign into accounts using email and password. Users are stored in a Postgres environment.
 - [x] **Profile and Credentials Management:** Update password and profile information using RESTful APIs. 
-- [ ] **Account Recovery:** Restore user access using flows for "Forgot Password" and Security Codes. Email is used as the user notification mechanism. 
+- [x] **Account Recovery:** Restore user access using flows for "Forgot Password" and a Magic Link. Email is used as the user notification mechanism. 
 - [ ] **Admin APIs:** Manage lifecycle operations for a user's status (active/deactive) and manage the JWT tokens lifecycle to ensure users are authenticated before using your app. 
 
 AuthCompanion ships without HTML Rendering, so you'll need to bring your own UI framework to make use of the feature APIs.
