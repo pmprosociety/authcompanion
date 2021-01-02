@@ -16,4 +16,18 @@ const updateSchema = {
   email: [required],
 };
 
-export { loginSchema, registrationSchema, updateSchema };
+const recoverySchema = {
+  email: [required],
+};
+
+const recoverytokenSchema = {
+  token: [required],
+};
+
+export {
+  loginSchema,
+  recoverySchema,
+  recoverytokenSchema,
+  registrationSchema,
+  updateSchema,
+};

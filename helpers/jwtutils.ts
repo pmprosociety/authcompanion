@@ -19,6 +19,7 @@ export async function makeAccesstoken(result: any) {
 
   const jwtheader: Header = { alg: "HS256", typ: "JWT" };
   const jwtpayload: Payload = {
+    id: user.UUID,
     name: user.name,
     email: user.email,
     exp: getNumericDate(date),
@@ -53,6 +54,7 @@ export async function makeRefreshtoken(result: any) {
 
   const jwtheader: Header = { alg: "HS256", typ: "JWT" };
   const jwtpayload: Payload = {
+    id: user.UUID,
     name: user.name,
     email: user.email,
     jti: newjtiClaim,
@@ -92,4 +94,31 @@ export async function validateJWT(jwt: any) {
     log.warning(err);
     throw new Error("Access Token is Invalid");
   }
+}
+
+export async function makeRecoverytoken(result: any) {
+  var date = new Date();
+  date.setMinutes(date.getMinutes() + 10);
+
+  const key = env.ACCESSTOKENKEY;
+
+  const objectRows = result.rowsOfObjects();
+  const user = objectRows[0];
+
+  const jwtheader: Header = { alg: "HS256", typ: "JWT" };
+  const jwtpayload: Payload = {
+    id: user.UUID,
+    name: user.name,
+    email: user.email,
+    exp: getNumericDate(date),
+  };
+
+  const resultingToken = await create(jwtheader, jwtpayload, key);
+
+  const responseObj = {
+    token: resultingToken,
+    expiration: jwtpayload.exp,
+  };
+
+  return responseObj;
 }
