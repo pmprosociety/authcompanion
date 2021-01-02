@@ -77,7 +77,7 @@ export const recoverUser = async (ctx: any) => {
         },
       };
     } else {
-      // if the request has no valid email, simulate an email being sent
+      // if the request has no valid email in the db, simulate an email being sent
       ctx.response.status = Status.OK;
       ctx.response.body = {
         data: {
