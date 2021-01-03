@@ -4,7 +4,7 @@ import { refresh } from "../services/refresh.ts";
 import { register } from "../services/register.ts";
 import { updateUser } from "../services/update.ts";
 import { recoverUser } from "../services/recovery.ts";
-import { recoverToken } from "../services/recoveryToken.ts";
+import { recoverToken } from "../services/recoverytoken.ts";
 
 import authorize from "../middlewares/authorize.ts";
 
