@@ -8,7 +8,7 @@ import { db } from "../db/db.ts";
 import log from "../helpers/log.ts";
 
 // api/v1/auth/register
-export const register = async (ctx: any) => {
+export const signUp = async (ctx: any) => {
   try {
     if (!ctx.request.hasBody) {
       ctx.throw(Status.BadRequest, "Bad Request");

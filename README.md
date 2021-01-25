@@ -23,7 +23,7 @@
      <img alt="GitHub license" src="https://img.shields.io/github/license/pmprosociety/authcompanion" />
    </a>
    <a href="https://deno.land">
-     <img src="https://img.shields.io/badge/deno-1.5.2-green?logo=deno"/>
+     <img src="https://img.shields.io/badge/deno-1.7.0-green?logo=deno"/>
    </a>
 
 </div>
@@ -111,7 +111,7 @@ Request Body:
 ---
 
 ### /auth/refresh
-Description: If the request has a valid refresh token (stored as cookie) return a access token and set a new refresh token cookie.
+Description: If the request has a valid refresh token (stored as cookie) return an access token and set a new refresh token cookie.
 
 **POST**
 Request Body: No body required

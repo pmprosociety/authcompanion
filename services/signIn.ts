@@ -6,8 +6,7 @@ import { loginSchema } from "../services/schemas.ts";
 import { db } from "../db/db.ts";
 import log from "../helpers/log.ts";
 
-// /api/v1/auth/login
-export const login = async (ctx: any) => {
+export const signIn = async (ctx: any) => {
   try {
     if (!ctx.request.hasBody) {
       ctx.throw(Status.BadRequest, "Bad Request, No Request Body");

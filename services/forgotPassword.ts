@@ -16,7 +16,7 @@ const connectConfig: any = {
   password: env.SMTP_PASSWORD,
 };
 
-export const recoverUser = async (ctx: any) => {
+export const forgotPassword = async (ctx: any) => {
   try {
     if (!ctx.request.hasBody) {
       log.debug("Request has no body");

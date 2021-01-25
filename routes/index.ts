@@ -1,9 +1,9 @@
 import { Router } from "../deps.ts";
-import { login } from "../services/login.ts";
+import { signIn } from "../services/signIn.ts";
 import { refresh } from "../services/refresh.ts";
-import { register } from "../services/register.ts";
-import { updateUser } from "../services/update.ts";
-import { recoverUser } from "../services/recovery.ts";
+import { signUp } from "../services/signUp.ts";
+import { updateUser } from "../services/updateUser.ts";
+import { forgotPassword } from "../services/forgotPassword.ts";
 import { recoverToken } from "../services/recoverytoken.ts";
 
 import authorize from "../middlewares/authorize.ts";
@@ -15,10 +15,10 @@ const router = new Router({ prefix: pathPrefix });
 
 //auth routes
 router
-  .post("auth/register", register)
-  .post("auth/login", login)
+  .post("auth/register", signUp)
+  .post("auth/login", signIn)
   .post("auth/refresh", refresh)
-  .post("auth/recovery", recoverUser)
+  .post("auth/recovery", forgotPassword)
   .post("auth/recovery/token", recoverToken)
   .post("auth/users/me", authorize, updateUser);
 
