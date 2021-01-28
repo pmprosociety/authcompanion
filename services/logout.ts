@@ -36,7 +36,6 @@ export const logoutUser = async (ctx: any) => {
         attributes: {
           name: user.name,
           email: user.email,
-          updated_at: user.updated_at,
         },
       },
     };
