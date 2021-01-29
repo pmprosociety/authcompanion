@@ -34,8 +34,8 @@ export const updateUser = async (ctx: any) => {
     await db.connect();
 
     const userObj = await db.query(
-      "SELECT * FROM users WHERE email = $1;",
-      ctx.state.JWTclaims.email,
+      `SELECT * FROM "users" WHERE "UUID" = $1;`,
+      ctx.state.JWTclaims.id,
     );
 
     if (userObj.rowCount == 0) {
@@ -51,12 +51,12 @@ export const updateUser = async (ctx: any) => {
       const jtiClaim = v4.generate();
 
       const result = await db.query(
-        "Update users SET name = $1, email = $2, password = $3, refresh_token = $4 WHERE email = $5 RETURNING *;",
+        `Update "users" SET name = $1, email = $2, password = $3, refresh_token = $4 WHERE "UUID" = $5 RETURNING *;`,
         name,
         email,
         hashpassword,
         jtiClaim,
-        ctx.state.JWTclaims.email,
+        ctx.state.JWTclaims.id,
       );
 
       const objectRows = result.rowsOfObjects();
@@ -86,10 +86,10 @@ export const updateUser = async (ctx: any) => {
       await db.end();
     } else {
       const result = await db.query(
-        "UPDATE users SET name = $1, email = $2 WHERE email = $3 RETURNING *;",
+        `UPDATE "users" SET name = $1, email = $2 WHERE "UUID" = $3 RETURNING *;`,
         name,
         email,
-        ctx.state.JWTclaims.email,
+        ctx.state.JWTclaims.id,
       );
 
       const objectRows = result.rowsOfObjects();

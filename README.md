@@ -34,7 +34,8 @@ For more information visit [AuthCompanion.com](https://authcompanion.com/)
 
 ## Getting Started
 
-To run AuthCompanion, download the source code or clone using git from this repository.
+To run AuthCompanion, download the source code or clone using git from this
+repository.
 
 ```sh
 git clone https://github.com/pmprosociety/authcompanion.git
@@ -48,113 +49,149 @@ Copy the example config file and change the default values in the .env file
 cp env.example .env
 ```
 
-Ensure Docker is installed - link if you need it: https://docs.docker.com/get-docker/
+Ensure Docker is installed - link if you need it:
+https://docs.docker.com/get-docker/
 
-Spin up AuthCompanion by navigating to the main project directory and running the docker command:
+Spin up AuthCompanion by navigating to the main project directory and running
+the docker command:
 
 ```sh
 docker-compose up
 ```
 
-🚀 The API server will be ready on localhost. See documentation below. 
+🚀 The API server will be ready on localhost. See documentation below.
 
 ## Who is this for?
 
-AuthCompanion’s development is opinionated.  That means the default configuration should be secure, sane and ready for production.  Configuration changes are kept to a minimum, ensuring that Authcompanion can start-up quickly and run smoothly in any environment - without having to study the docs for hours. 
+AuthCompanion’s development is opinionated. That means the default configuration
+should be secure, sane and ready for production. Configuration changes are kept
+to a minimum, ensuring that Authcompanion can start-up quickly and run smoothly
+in any environment - without having to study the docs for hours.
 
-We aim to keep complexity to the minimum.  If you are interested in a new feature please open an issue to discuss it before starting work.  We want to make sure any new features align to our AuthCompanion's tenants of simplicity and ease of use.
+We aim to keep complexity to the minimum. If you are interested in a new feature
+please open an issue to discuss it before starting work. We want to make sure
+any new features align to our AuthCompanion's tenants of simplicity and ease of
+use.
 
-Think of AuthCompanion as a base template for user management; which helps you to build web application prototypes FASTER.  
+Think of AuthCompanion as a base template for user management; which helps you
+to build web application prototypes FASTER.
 
 ## Features
-AuthCompanion fulfills the most common identity and user management needs for web applications, including:
 
-- [x] **Login and Registration:** Users can create and sign into accounts using email and password. Users are stored in a Postgres environment.
-- [x] **Profile and Credentials Management:** Update password and profile information using RESTful APIs. 
-- [x] **Account Recovery:** Restore user access using flows for "Forgot Password" and a Magic Link. Email is used as the user notification mechanism. 
+AuthCompanion fulfills the most common identity and user management needs for
+web applications, including:
 
-AuthCompanion ships without HTML Rendering, so you'll need to bring your own UI framework to make use of the feature APIs.
+- [x] **Login and Registration:** Users can create and sign into accounts using
+  email and password. Users are stored in a Postgres environment.
+- [x] **Profile and Credentials Management:** Update password and profile
+  information using RESTful APIs.
+- [x] **Account Recovery:** Restore user access using flows for "Forgot
+  Password" and a Magic Link. Email is used as the user notification mechanism.
+
+AuthCompanion ships without HTML Rendering, so you'll need to bring your own UI
+framework to make use of the feature APIs.
 
 ## Related Readings
 
 Famlilarize yourself with token-based authentication using JSON Web Tokens.
 
-- [The Ultimate Guide to handling JWTs on frontend clients](https://hasura.io/blog/best-practices-of-using-jwt-with-graphql/)
+- [The Ultimate Guide to handling JWTs on frontend
+  clients](https://hasura.io/blog/best-practices-of-using-jwt-with-graphql/)
 
 - [Web Authentication Method Comparison](https://testdriven.io/blog/web-authentication-methods/#token-based-authentication)
-
 
 ## API Documentation
 
 ### Server
+
 http://localhost:300/api/v1/
 
 ### Paths
+
 Content-Type: application/json
 
 ### /auth/register
+
 Description: Register your first user!
 
-**POST**
-Request Body:
+**POST** Request Body:
 `{ "name":"Authy Man", "email":"hello_world@authcompanion.com", "password":"mysecretpass" }`
 
 ---
 
 ### /auth/login
-Description: If the request has a valid username and password, return a JWT access token and set a refresh token.
 
-**POST**
-Request Body:
-`{ "email":"hello@authcompanion.com", "password":"mysecretpass" }` 
+Description: If the request has a valid username and password, return a JWT
+access token and set a refresh token (as a cookie).
+
+**POST** Request Body:
+`{ "email":"hello@authcompanion.com", "password":"mysecretpass" }`
 
 ---
 
 ### /auth/refresh
-Description: If the request has a valid refresh token (stored as cookie) return an access token and set a new refresh token cookie.
 
-**POST**
-Request Body: No body required
+Description: If the request has a valid refresh token (stored as cookie) return
+an access token and set a new refresh token cookie.
 
-Cookie required: refreshToken=_users refresh token_
+**POST** Request Body: None Required
+
+Cookie required: refreshToken=_user's refresh token_
 
 ---
 
 ### /auth/users/me
+
 Description: Update the user's record by changing the name, email and password.
 
-**POST**
-Request Body:
-`{ "name":"Authy Man", "email":"hello_world@authcompanion.com", "password":"mysecretpass" }` 
+**POST** Request Body:
+`{ "name":"Authy Man", "email":"hello_world@authcompanion.com", "password":"mysecretpass" }`
 *password field is optional
 
-Authorization: Bearer _user's access token here_
+Authorization Required: Bearer _user's access token_
 
 ---
 
 ### /auth/recovery
-Description: If the request has a valid user, issue an account recovery email which contains a URL with a recovery token in the query parameters. Works together with '/auth/recovery/' to restore a user's access to an account. UI will be responsible for 1) trading the recovery token for an access token using 'auth/recovery/token' below 2) handling how to route the user within the application.
 
-**POST**
-Request Body:
-`{ "email":"hello_world@authcompanion.com" }` 
+Description: If the request has a valid user, issue an account recovery email
+which contains a URL with a recovery token in the query parameters. Works
+together with '/auth/recovery/' to restore a user's access to an account. UI
+will be responsible for 1) trading the recovery token for an access token using
+'auth/recovery/token' below 2) handling how to route the user within the
+application.
+
+**POST** Request Body: `{ "email":"hello_world@authcompanion.com" }`
 
 ---
 
 ### auth/recovery/token
-Description: If the request has a valid short lived recovery token, issue a new access token. 
 
-**POST**
-Request Body:
-`{ "token":"_recovery token here_" }` 
+Description: If the request has a valid and short lived recovery token (issued
+from the recovery email), trade it for a new access token, so the user can
+login.
+
+**POST** Request Body: `{ "token":"_recovery token here_" }`
+
+---
+
+### auth/auth/logout
+
+Description: Only the user's refresh token will be invalidated using this route.  Authorization tokens are still valid for the period of their expiration date.  The UI responsible for implementation of these APIs should remove the Authorization token from the application memory and require the user to login to recieve a new token.  
+
+**GET** Request Body: None Required
+
+Authorization Required: Bearer _user's access token_
 
 ---
 
 ## License
 
-AuthCompanion is licensed under the [MIT](https://opensource.org/licenses/MIT) license.
+AuthCompanion is licensed under the [MIT](https://opensource.org/licenses/MIT)
+license.
 
 ## Contributions
+
 Author: Paul Fischer [(Github)](https://github.com/pmprosociety)
 
 Contributors: Teddy Schmitz [(Github)](https://github.com/Teddy-Schmitz)
