@@ -21,8 +21,11 @@ const server = app.listen({ port: PORT, signal });
 // Listen for SigTerm (Docker shutdown) SigInt (CTRL-C) and SIGABRT.
 await Promise.any(
   [
+    // @ts-ignore
     Deno.signal(Deno.Signal.SIGTERM),
+    // @ts-ignore
     Deno.signal(Deno.Signal.SIGINT),
+    // @ts-ignore
     Deno.signal(Deno.Signal.SIGABRT),
   ],
 );
