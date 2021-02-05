@@ -177,7 +177,11 @@ login.
 
 ### /auth/logout
 
-Description: Only the user's refresh token will be invalidated using this route.  Authorization tokens are still valid for the period of their expiration date.  The UI responsible for implementation of these APIs should remove the Authorization token from the application memory and require the user to login to recieve a new token.  
+Description: Only the user's refresh token will be invalidated using this route.
+Authorization tokens are still valid for the period of their expiration date.
+The UI responsible for implementation of these APIs should remove the
+Authorization token from the application memory and require the user to login to
+recieve a new token.
 
 **GET** Request Body: None Required
 
