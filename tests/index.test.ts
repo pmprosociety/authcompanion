@@ -240,4 +240,3 @@ Deno.test("API Endpoint Test: /auth/logout", async () => {
     "The API did not return a successful response; check server logs",
   );
 });
-

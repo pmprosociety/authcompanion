@@ -30,9 +30,17 @@
 
 ---
 
-For more information visit [AuthCompanion.com](https://authcompanion.com/)
+<div align="center">
+
+AuthCompanion is a Token-based Authentication server well suited for
+microservices architectures and static websites. The user authenticates using
+valid credentials and the server returns a signed token.
+
+</div>
 
 ## Getting Started
+
+### Docker Deployment
 
 To run AuthCompanion, download the source code or clone using git from this
 repository.
@@ -43,7 +51,8 @@ git clone https://github.com/pmprosociety/authcompanion.git
 cd authcompanion
 ```
 
-Copy the example config file and change the default values in the .env file
+Copy the example config file and change the default values in the .env file (or
+you know... keep it if you're just trying things out)
 
 ```sh
 cp env.example .env
@@ -61,39 +70,37 @@ docker-compose up
 
 🚀 The API server will be ready on localhost. See documentation below.
 
-## Who is this for?
-
-AuthCompanion’s development is opinionated. That means the default configuration
-should be secure, sane and ready for production. Configuration changes are kept
-to a minimum, ensuring that Authcompanion can start-up quickly and run smoothly
-in any environment - without having to study the docs for hours.
-
-We aim to keep complexity to the minimum. If you are interested in a new feature
-please open an issue to discuss it before starting work. We want to make sure
-any new features align to our AuthCompanion's tenants of simplicity and ease of
-use.
-
-Think of AuthCompanion as a base template for user management; which helps you
-to build web application prototypes FASTER.
-
 ## Features
 
-AuthCompanion fulfills the most common identity and user management needs for
-web applications, including:
+AuthCompanion aims to satisfy your most common identity and user management
+needs. The server include:
 
-- [x] **Login and Registration:** Users can create and sign into accounts using
-  email and password. Users are stored in a Postgres environment.
-- [x] **Profile and Credentials Management:** Update password and profile
-  information using RESTful APIs.
-- [x] **Account Recovery:** Restore user access using flows for "Forgot
-  Password" and a Magic Link. Email is used as the user notification mechanism.
+- [x] **Login and Registration:** Create and sign into accounts using email and
+  password - users are stored in AuthCompanion's Postgres database.
+- [x] **Profile and Credentials Management:** Update the password and profile
+  information of your users with AuthCompanion's REST APIs.
+- [x] **Account Recovery:** Restore user access using the **Forgot Password**
+  flow which includes a special link for recovering an account quickly. The
+  user's email is used to recover the account.
+- [x] **Token Lifecycle & Logout:** Keep the user's token fresh when using the
+  application. When done, securely log them out.
 
-AuthCompanion ships without HTML Rendering, so you'll need to bring your own UI
-framework to make use of the feature APIs.
+Note: AuthCompanion ships without HTML Rendering, so you'll need to bring your
+own UI framework to make use of these feature APIs.
+
+## Who is this for?
+
+AuthCompanion’s default configuration strives to be secure, sane and reliable
+for production. Configuration changes are kept to a minimum, ensuring that
+Authcompanion can start-up quickly and run smoothly in any environment...
+without having to study docs for hours.
+
+Think of this server as a base template for getting your application started
+with user management. AuthCompanion will help you build web application FASTER.
 
 ## Related Readings
 
-Famlilarize yourself with token-based authentication using JSON Web Tokens.
+Familiarize yourself with token-based authentication using JSON Web Tokens.
 
 - [The Ultimate Guide to handling JWTs on frontend
   clients](https://hasura.io/blog/best-practices-of-using-jwt-with-graphql/)
@@ -112,7 +119,7 @@ Content-Type: application/json
 
 ### /auth/register
 
-Description: Register your first user!
+Description: Register your first user.
 
 **POST** Request Body:
 `{ "name":"Authy Man", "email":"hello_world@authcompanion.com", "password":"mysecretpass" }`
@@ -122,7 +129,7 @@ Description: Register your first user!
 ### /auth/login
 
 Description: If the request has a valid username and password, return a JWT
-access token and set a refresh token (as a cookie).
+access token and set a refresh token (as a http only cookie).
 
 **POST** Request Body:
 `{ "email":"hello@authcompanion.com", "password":"mysecretpass" }`
@@ -181,7 +188,7 @@ Description: Only the user's refresh token will be invalidated using this route.
 Authorization tokens are still valid for the period of their expiration date.
 The UI responsible for implementation of these APIs should remove the
 Authorization token from the application memory and require the user to login to
-recieve a new token.
+receive a new token.
 
 **GET** Request Body: None Required
 
