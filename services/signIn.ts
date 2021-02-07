@@ -1,10 +1,9 @@
 import { Status } from "../deps.ts";
 import { compare } from "../deps.ts";
-import { validate } from "../deps.ts";
 import { makeAccesstoken, makeRefreshtoken } from "../helpers/jwtutils.ts";
-import { loginSchema } from "../services/schemas.ts";
 import { db } from "../db/db.ts";
 import log from "../helpers/log.ts";
+import { superstruct } from "../deps.ts";
 
 export const signIn = async (ctx: any) => {
   try {
@@ -19,12 +18,13 @@ export const signIn = async (ctx: any) => {
       ctx.throw(Status.BadRequest, "Bad Request, Incorrect Body Type");
     }
 
-    //validate body schema
-    const [passes, errors] = await validate(bodyValue, loginSchema);
+    // validate request body against a schmea
+    const loginSchema = superstruct.object({
+      email: superstruct.string(),
+      password: superstruct.string(),
+    });
 
-    if (!passes) {
-      ctx.throw(Status.BadRequest, errors);
-    }
+    superstruct.assert(bodyValue, loginSchema);
 
     const { email, password } = bodyValue;
 

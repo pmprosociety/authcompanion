@@ -1,13 +1,12 @@
 import { Status } from "../deps.ts";
-import { validate } from "../deps.ts";
 import {
   makeAccesstoken,
   makeRefreshtoken,
   validateJWT,
 } from "../helpers/jwtutils.ts";
-import { recoverytokenSchema } from "./schemas.ts";
 import { db } from "../db/db.ts";
 import log from "../helpers/log.ts";
+import { superstruct } from "../deps.ts";
 
 export const recoverToken = async (ctx: any) => {
   try {
@@ -24,12 +23,12 @@ export const recoverToken = async (ctx: any) => {
       ctx.throw(Status.BadRequest, "Bad Request, Please Try Again");
     }
 
-    const [passes, errors] = await validate(bodyValue, recoverytokenSchema);
+    // validate request body against a schmea
+    const recoverytokenSchema = superstruct.object({
+      token: superstruct.string(),
+    });
 
-    if (!passes) {
-      log.debug("Request did not pass body validation");
-      ctx.throw(Status.BadRequest, errors);
-    }
+    superstruct.assert(bodyValue, recoverytokenSchema);
 
     const { token } = bodyValue;
 

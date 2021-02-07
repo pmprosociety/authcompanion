@@ -1,11 +1,10 @@
 import { Status } from "../deps.ts";
-import { validate } from "../deps.ts";
 import { makeRecoverytoken } from "../helpers/jwtutils.ts";
-import { recoverySchema } from "./schemas.ts";
 import { db } from "../db/db.ts";
 import log from "../helpers/log.ts";
 import { SmtpClient } from "../deps.ts";
 import { config } from "../deps.ts";
+import { superstruct } from "../deps.ts";
 
 const env = config();
 
@@ -31,13 +30,12 @@ export const forgotPassword = async (ctx: any) => {
       ctx.throw(Status.BadRequest, "Bad Request, Please Try Again");
     }
 
-    //Request Body Validation
-    const [passes, errors] = await validate(bodyValue, recoverySchema);
+    // validate request body against a schema
+    const recoverySchema = superstruct.object({
+      email: superstruct.string(),
+    });
 
-    if (!passes) {
-      log.debug("Request did not pass body validation");
-      ctx.throw(Status.BadRequest, errors);
-    }
+    superstruct.assert(bodyValue, recoverySchema);
 
     const { email } = bodyValue;
 

@@ -1,11 +1,10 @@
 import { Status } from "../deps.ts";
 import { hash } from "../deps.ts";
-import { validate } from "../deps.ts";
 import { v4 } from "../deps.ts";
 import { makeAccesstoken, makeRefreshtoken } from "../helpers/jwtutils.ts";
-import { updateSchema } from "./schemas.ts";
 import { db } from "../db/db.ts";
 import log from "../helpers/log.ts";
+import { superstruct } from "../deps.ts";
 
 export const updateUser = async (ctx: any) => {
   try {
@@ -22,12 +21,14 @@ export const updateUser = async (ctx: any) => {
       ctx.throw(Status.BadRequest, "Bad Request");
     }
 
-    const [passes, errors] = await validate(bodyValue, updateSchema);
+    // validate request body against a schmea
+    const updateSchema = superstruct.object({
+      name: superstruct.string(),
+      email: superstruct.string(),
+      password: superstruct.optional(superstruct.string()),
+    });
 
-    if (!passes) {
-      log.debug("Request did not pass validation");
-      ctx.throw(Status.BadRequest, errors);
-    }
+    superstruct.assert(bodyValue, updateSchema);
 
     const { name, email, password } = bodyValue;
 

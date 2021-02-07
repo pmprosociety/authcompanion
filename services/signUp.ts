@@ -1,11 +1,10 @@
 import { Status } from "../deps.ts";
 import { hash } from "../deps.ts";
-import { validate } from "../deps.ts";
 import { v4 } from "../deps.ts";
 import { makeAccesstoken, makeRefreshtoken } from "../helpers/jwtutils.ts";
-import { registrationSchema } from "../services/schemas.ts";
 import { db } from "../db/db.ts";
 import log from "../helpers/log.ts";
+import { superstruct } from "../deps.ts";
 
 // api/v1/auth/register
 export const signUp = async (ctx: any) => {
@@ -20,12 +19,15 @@ export const signUp = async (ctx: any) => {
     if (body.type !== "json") {
       ctx.throw(Status.BadRequest, "Bad Request");
     }
-    //validate body schema
-    const [passes, errors] = await validate(bodyValue, registrationSchema);
 
-    if (!passes) {
-      ctx.throw(Status.BadRequest, errors);
-    }
+    // validate request body against a schmea
+    const registrationSchema = superstruct.object({
+      name: superstruct.string(),
+      email: superstruct.string(),
+      password: superstruct.string(),
+    });
+
+    superstruct.assert(bodyValue, registrationSchema);
 
     const { name, email, password } = bodyValue;
 

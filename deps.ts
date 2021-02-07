@@ -14,11 +14,6 @@ export {
   verify,
 } from "https://deno.land/x/djwt@v2.1/mod.ts";
 export type { Header, Payload } from "https://deno.land/x/djwt@v2.1/mod.ts";
-export {
-  isNumber,
-  required,
-  validate,
-} from "https://deno.land/x/validasaur@v0.15.0/mod.ts";
 export { v4 } from "https://deno.land/std@0.85.0/uuid/mod.ts";
 export * as log from "https://deno.land/std@0.85.0/log/mod.ts";
 export { SmtpClient } from "https://deno.land/x/smtp@v0.7.0/mod.ts";
@@ -29,3 +24,5 @@ export {
   yellow,
 } from "https://deno.land/std@0.86.0/fmt/colors.ts";
 export { format } from "https://deno.land/std@0.86.0/datetime/mod.ts";
+import * as superstruct from "https://cdn.skypack.dev/superstruct";
+export { superstruct };
