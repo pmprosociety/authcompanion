@@ -2,13 +2,15 @@ import { Application } from "./deps.ts";
 // middleware
 import notFound from "./middlewares/notFound.ts";
 // logging
-import { organ } from "./deps.ts";
-//routes
+import logger from "./middlewares/logger.ts";
+// routes
 import index from "./routes/index.ts";
 
 const app = new Application();
 
-app.use(organ());
+// app.use(organ());
+app.use(logger.logger);
+app.use(logger.responseTime);
 
 app.use(index.routes());
 app.use(index.allowedMethods());
