@@ -5,6 +5,8 @@ import notFound from "./middlewares/notFound.ts";
 import logger from "./middlewares/logger.ts";
 // routes
 import index from "./routes/index.ts";
+import log from "./helpers/log.ts";
+import { db } from "./db/db.ts";
 
 const app = new Application();
 
@@ -17,5 +19,14 @@ app.use(index.allowedMethods());
 
 // General 404 Error Page
 app.use(notFound);
+
+//Setup DB
+// try {
+//   await db.connect();
+// } catch (e) {
+//   log.error("DB Connection failed - shutting down");
+//   log.error(e);
+//   Deno.exit(1);
+// }
 
 export default app;

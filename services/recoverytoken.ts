@@ -35,8 +35,6 @@ export const recoverToken = async (ctx: any) => {
     //if the request has a valid recovery token, issue new access token
     let validatedtoken = await validateJWT(token);
 
-    await db.connect();
-
     const userObj = await db.query(
       "SELECT * FROM users WHERE email = $1;",
       validatedtoken.payload.email,
@@ -62,7 +60,7 @@ export const recoverToken = async (ctx: any) => {
         },
       },
     };
-    await db.end();
+    await db.release();
   } catch (err) {
     log.error(err);
     ctx.response.status = err.status | 400;

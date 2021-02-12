@@ -1,14 +1,14 @@
-import { Client } from "../deps.ts";
-import { config } from "../deps.ts";
+import { Pool } from "../deps.ts";
+import log from "../helpers/log.ts";
 
-const env = config();
+const pool = new Pool({
+  user: Deno.env.get("DBUSER"),
+  database: Deno.env.get("DATABASE"),
+  hostname: Deno.env.get("DBHOSTNAME"),
+  password: Deno.env.get("DBPASSWORD"),
+  port: Number(Deno.env.get("DBPORT") ?? 5432),
+}, 20);
 
-const db = new Client({
-  user: env.USER,
-  database: env.DATABASE,
-  hostname: env.HOSTNAME,
-  password: env.PASSWORD,
-  port: +env.DBPORT,
-});
+const db = await pool.connect();
 
 export { db };

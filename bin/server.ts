@@ -1,10 +1,7 @@
 import app from "../app.ts";
-import { config } from "../deps.ts";
 import log from "../helpers/log.ts";
 
-const env = config();
-
-const PORT: number = Number(env.PORT) || 3000;
+const PORT: number = Number(Deno.env.get("PORT") ?? 3000);
 const controller = new AbortController();
 const { signal } = controller;
 

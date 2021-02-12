@@ -1,11 +1,9 @@
-import { config, log } from "../deps.ts";
+import { log } from "../deps.ts";
 
-const env = config();
-
-const level: log.LevelName = env.LOGLEVEL
-  ? <log.LevelName> env.LOGLEVEL.toUpperCase()
+const level: log.LevelName = Deno.env.get("LOGLEVEL")
+  ? <log.LevelName> Deno.env.get("LOGLEVEL")?.toUpperCase()
   : "INFO";
-const handler = env.LOGHANDLER || "console";
+const handler = Deno.env.get("LOGHANDLER") ?? "console";
 
 await log.setup({
   handlers: {
