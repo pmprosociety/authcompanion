@@ -1,79 +1,86 @@
-import { create, decode, getNumericDate, verify } from "../deps.ts";
-import { Header, Payload } from "../deps.ts";
-import { config } from "../deps.ts";
-import { v4 } from "../deps.ts";
+import {
+  create,
+  decode,
+  getNumericDate,
+  Header,
+  Payload,
+  v4,
+  verify,
+} from "../deps.ts";
 
 import { db } from "../db/db.ts";
 import log from "./log.ts";
-
-const env = config();
 
 export async function makeAccesstoken(result: any) {
   var date = new Date();
   date.setHours(date.getHours() + 4);
 
-  const key = env.ACCESSTOKENKEY;
+  const key = Deno.env.get("ACCESSTOKENKEY");
+  if (key != undefined) {
+    const objectRows = result.rowsOfObjects();
+    const user = objectRows[0];
 
-  const objectRows = result.rowsOfObjects();
-  const user = objectRows[0];
+    const jwtheader: Header = { alg: "HS256", typ: "JWT" };
+    const jwtpayload: Payload = {
+      id: user.UUID,
+      name: user.name,
+      email: user.email,
+      exp: getNumericDate(date),
+    };
 
-  const jwtheader: Header = { alg: "HS256", typ: "JWT" };
-  const jwtpayload: Payload = {
-    id: user.UUID,
-    name: user.name,
-    email: user.email,
-    exp: getNumericDate(date),
-  };
+    const resultingToken = await create(jwtheader, jwtpayload, key);
 
-  const resultingToken = await create(jwtheader, jwtpayload, key);
+    const responseObj = {
+      token: resultingToken,
+      expiration: jwtpayload.exp,
+    };
 
-  const responseObj = {
-    token: resultingToken,
-    expiration: jwtpayload.exp,
-  };
-
-  return responseObj;
+    return responseObj;
+  }
+  throw new Error("ACCESSTOKENKEY is invalid");
 }
 
 export async function makeRefreshtoken(result: any) {
   var date = new Date();
   date.setDate(date.getDate() + 30 * 2);
 
-  const key = env.REFRESHTOKENKEY;
+  const key = Deno.env.get("REFRESHTOKENKEY");
+  if (key != undefined) {
+    const objectRows = result.rowsOfObjects();
+    const user = objectRows[0];
 
-  const objectRows = result.rowsOfObjects();
-  const user = objectRows[0];
+    const newjtiClaim = v4.generate();
 
-  const newjtiClaim = v4.generate();
+    await db.query(
+      "UPDATE users SET refresh_token = $1 WHERE refresh_token = $2 RETURNING *;",
+      newjtiClaim,
+      user.refresh_token,
+    );
 
-  await db.query(
-    "UPDATE users SET refresh_token = $1 WHERE refresh_token = $2 RETURNING *;",
-    newjtiClaim,
-    user.refresh_token,
-  );
+    const jwtheader: Header = { alg: "HS256", typ: "JWT" };
+    const jwtpayload: Payload = {
+      id: user.UUID,
+      name: user.name,
+      email: user.email,
+      jti: newjtiClaim,
+      exp: getNumericDate(date),
+    };
 
-  const jwtheader: Header = { alg: "HS256", typ: "JWT" };
-  const jwtpayload: Payload = {
-    id: user.UUID,
-    name: user.name,
-    email: user.email,
-    jti: newjtiClaim,
-    exp: getNumericDate(date),
-  };
-
-  return await create(jwtheader, jwtpayload, key);
+    return await create(jwtheader, jwtpayload, key);
+  }
+  throw new Error("REFRESHTOKENKEY is invalid");
 }
 
 export async function validateRefreshToken(jwt: any) {
-  const key = env.REFRESHTOKENKEY;
+  const key = Deno.env.get("REFRESHTOKENKEY");
   try {
+    if (key != undefined) {
+      await verify(jwt, key, "HS256");
+      let validatedToken = await decode(jwt);
+      return validatedToken;
+    }
+    throw new Error("REFRESHTOKENKEY is invalid");
     //verify the jwt
-    await verify(jwt, key, "HS256");
-
-    //decode the jwt
-    let validatedToken = await decode(jwt);
-
-    return validatedToken;
   } catch (err) {
     log.warning(err);
     throw new Error("Reresh Token is Invalid");
@@ -81,15 +88,18 @@ export async function validateRefreshToken(jwt: any) {
 }
 
 export async function validateJWT(jwt: any) {
-  const key = env.ACCESSTOKENKEY;
+  const key = Deno.env.get("ACCESSTOKENKEY");
   try {
-    //verify the jwt (includes signature validation) otherwise throw error
-    await verify(jwt, key, "HS256");
+    if (key != undefined) {
+      //verify the jwt (includes signature validation) otherwise throw error
+      await verify(jwt, key, "HS256");
 
-    //decode the jwt (without signature verfication) otherwise throw error
-    let validatedToken = await decode(jwt);
+      //decode the jwt (without signature verfication) otherwise throw error
+      let validatedToken = await decode(jwt);
 
-    return validatedToken;
+      return validatedToken;
+    }
+    throw new Error("ACCESSTOKENKEY is invalid");
   } catch (err) {
     log.warning(err);
     throw new Error("Access Token is Invalid");
@@ -100,25 +110,26 @@ export async function makeRecoverytoken(result: any) {
   var date = new Date();
   date.setMinutes(date.getMinutes() + 10);
 
-  const key = env.ACCESSTOKENKEY;
+  const key = Deno.env.get("ACCESSTOKENKEY");
 
-  const objectRows = result.rowsOfObjects();
-  const user = objectRows[0];
+  if (key != undefined) {
+    const objectRows = result.rowsOfObjects();
+    const user = objectRows[0];
 
-  const jwtheader: Header = { alg: "HS256", typ: "JWT" };
-  const jwtpayload: Payload = {
-    id: user.UUID,
-    name: user.name,
-    email: user.email,
-    exp: getNumericDate(date),
-  };
+    const jwtheader: Header = { alg: "HS256", typ: "JWT" };
+    const jwtpayload: Payload = {
+      id: user.UUID,
+      name: user.name,
+      email: user.email,
+      exp: getNumericDate(date),
+    };
 
-  const resultingToken = await create(jwtheader, jwtpayload, key);
+    const resultingToken = await create(jwtheader, jwtpayload, key);
 
-  const responseObj = {
-    token: resultingToken,
-    expiration: jwtpayload.exp,
-  };
-
-  return responseObj;
+    return {
+      token: resultingToken,
+      expiration: jwtpayload.exp,
+    };
+  }
+  throw new Error("ACCESSTOKENKEY is invalid");
 }

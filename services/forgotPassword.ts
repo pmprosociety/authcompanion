@@ -3,16 +3,13 @@ import { makeRecoverytoken } from "../helpers/jwtutils.ts";
 import { db } from "../db/db.ts";
 import log from "../helpers/log.ts";
 import { SmtpClient } from "../deps.ts";
-import { config } from "../deps.ts";
 import { superstruct } from "../deps.ts";
 
-const env = config();
-
 const connectConfig: any = {
-  hostname: env.SMTP_HOSTNAME,
-  port: +env.SMTP_PORT,
-  username: env.SMTP_USERNAME,
-  password: env.SMTP_PASSWORD,
+  hostname: Deno.env.get("SMTP_HOSTNAME"),
+  port: Number(Deno.env.get("SMTP_PORT")),
+  username: Deno.env.get("SMTP_USERNAME"),
+  password: Deno.env.get("SMTP_PASSWORD"),
 };
 
 export const forgotPassword = async (ctx: any) => {
@@ -38,9 +35,6 @@ export const forgotPassword = async (ctx: any) => {
     superstruct.assert(bodyValue, recoverySchema);
 
     const { email } = bodyValue;
-
-    await db.connect();
-
     const userObj = await db.query(
       "SELECT * FROM users WHERE email = $1;",
       email,
@@ -58,11 +52,13 @@ export const forgotPassword = async (ctx: any) => {
       const recoveryToken = await makeRecoverytoken(userObj);
 
       await client.send({
-        from: env.FROM_ADDRESS,
+        from: Deno.env.get("FROM_ADDRESS") ?? "no-reply@example.com",
         to: user.email,
         subject: "Account Recovery",
         content:
-          `Hello </br> Please use the following link to sign into your account: <a href="${env.RECOVERY_REDIRECT_URL}?token=${recoveryToken.token}">Click Here</a>`,
+          `Hello </br> Please use the following link to sign into your account: <a href="${
+            Deno.env.get("RECOVERY_REDIRECT_URL")
+          }?token=${recoveryToken.token}">Click Here</a>`,
       });
       await client.close();
 
@@ -86,7 +82,7 @@ export const forgotPassword = async (ctx: any) => {
       };
     }
 
-    await db.end();
+    await db.release();
   } catch (err) {
     log.error(err);
     ctx.response.status = err.status | 400;

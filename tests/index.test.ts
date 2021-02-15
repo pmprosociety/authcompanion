@@ -1,27 +1,101 @@
+import app from "../app.ts";
 import { assertEquals } from "https://deno.land/std@0.85.0/testing/asserts.ts";
+import { BufReader, BufWriter, Context } from "../test_deps.ts";
 import { db } from "../db/db.ts";
 import {
   makeAccesstoken,
   makeRecoverytoken,
   makeRefreshtoken,
 } from "../helpers/jwtutils.ts";
+import { signUp } from "../services/signUp.ts";
+import { signIn } from "../services/signIn.ts";
+import { refresh } from "../services/refresh.ts";
+import { updateUser } from "../services/updateUser.ts";
+import { recoverToken } from "../services/recoverytoken.ts";
+import { logoutUser } from "../services/logout.ts";
+import authorize from "../middlewares/authorize.ts";
+import {forgotPassword} from "../services/forgotPassword.ts";
 
-/*
-Prerequisite: use deno run --watch -A --unstable bin/server.ts 
-to start the API server locally (or docker) before running test cases.
-
-Test cases assume both the test API and database is running before executing the tests.
-*/
+const encoder = new TextEncoder();
 
 async function cleanTestData() {
-  await db.connect();
-
   const result = await db.query(
     "DELETE FROM users WHERE email = $1;",
     "test_case@authcompanion.com",
   );
 
-  await db.end();
+  await db.release();
+}
+
+interface MockServerOptions {
+  headers?: [string, string][];
+  proto?: string;
+  url?: string;
+  body?: string;
+  headerValues?: Record<string, string>;
+}
+
+interface ServerResponse {
+  status: number;
+  headers: Headers;
+  body: Uint8Array | Deno.Reader | undefined;
+}
+
+interface ServerRequest {
+  body: Deno.Reader;
+  conn: Deno.Conn;
+  headers: Headers;
+  method: string;
+  r: BufReader;
+  respond(response: ServerResponse): Promise<void>;
+  url: string;
+  w: BufWriter;
+}
+
+function createMockBodyReader(body: string): Deno.Reader {
+  const buf = encoder.encode(body);
+  let offset = 0;
+  return {
+    async read(p: Uint8Array): Promise<number | null> {
+      if (offset >= buf.length) {
+        return null;
+      }
+      const chunkSize = Math.min(p.length, buf.length - offset);
+      p.set(buf);
+      offset += chunkSize;
+      return chunkSize;
+    },
+  };
+}
+
+function createMockServerRequest(
+  {
+    url = "/",
+    proto = "HTTP/1.1",
+    body = "",
+    headerValues = {},
+    headers: headersInit = [["host", "localhost"]],
+  }: MockServerOptions = {},
+): ServerRequest {
+  const headers = new Headers(headersInit);
+  for (const [key, value] of Object.entries(headerValues)) {
+    headers.set(key, value);
+  }
+  if (body.length && !headers.has("content-length")) {
+    headers.set("content-length", String(body.length));
+  }
+  return {
+    conn: {
+      close() {},
+    },
+    w: new BufWriter(new Deno.Buffer(new Uint8Array())),
+    headers,
+    method: "POST",
+    proto,
+    url,
+    body: createMockBodyReader(body),
+    async respond() {},
+  } as any;
 }
 
 Deno.test("API Endpoint Test: /auth/register", async () => {
@@ -31,51 +105,47 @@ Deno.test("API Endpoint Test: /auth/register", async () => {
     "password": "mysecretpass",
   };
 
-  let res = await fetch(
-    "http://localhost:3001/api/v1/auth/register",
-    {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
+  const ctx = new Context(
+    app,
+    createMockServerRequest({
       body: JSON.stringify(requestBody),
-    },
+      headerValues: { "content-type": "application/json" },
+    }),
   );
-  const json = await res.json();
+
+  await signUp(ctx);
+
   assertEquals(
-    res.ok,
-    true,
+    ctx.response.status,
+    201,
     "The API did not return a successful response; check server logs",
   );
 });
 
 Deno.test("API Endpoint Test: /auth/login", async () => {
   const requestBody = {
-    "email": "hello_world1@authcompanion.com",
+    "email": "test_case@authcompanion.com",
     "password": "mysecretpass",
   };
 
-  let res = await fetch(
-    "http://localhost:3001/api/v1/auth/login",
-    {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
+  const ctx = new Context(
+    app,
+    createMockServerRequest({
       body: JSON.stringify(requestBody),
-    },
+      headerValues: { "content-type": "application/json" },
+    }),
   );
-  const json = await res.json();
+
+  await signIn(ctx);
+
   assertEquals(
-    res.ok,
-    true,
+    ctx.response.status,
+    200,
     "The API did not return a successful response; check server logs",
   );
 });
 
 Deno.test("API Endpoint Test: /auth/refresh", async () => {
-  await db.connect();
-
   const result = await db.query(
     "SELECT * FROM users WHERE email = $1;",
     "test_case@authcompanion.com",
@@ -83,24 +153,22 @@ Deno.test("API Endpoint Test: /auth/refresh", async () => {
 
   const refreshToken = await makeRefreshtoken(result);
 
-  let res2 = await fetch(
-    "http://localhost:3001/api/v1/auth/refresh",
-    {
-      method: "POST",
-      credentials: "include",
-      headers: {
-        "Content-Type": "application/json",
-        cookie: `refreshToken=${refreshToken}`,
+  const ctx = new Context(
+    app,
+    createMockServerRequest({
+      headerValues: {
+        "content-type": "application/json",
+        "Cookie": `refreshToken=${refreshToken}`,
       },
-    },
+    }),
   );
-  const json = await res2.json();
 
-  await db.end();
+  await refresh(ctx);
 
+  await db.release();
   assertEquals(
-    res2.ok,
-    true,
+    ctx.response.status,
+    200,
     "The API did not return a successful response; check server logs",
   );
 });
@@ -112,7 +180,6 @@ Deno.test("API Endpoint Test: /auth/users/me", async () => {
     "password": "mysecretpass",
   };
 
-  await db.connect();
 
   const result = await db.query(
     "SELECT * FROM users WHERE email = $1;",
@@ -121,66 +188,44 @@ Deno.test("API Endpoint Test: /auth/users/me", async () => {
 
   const accessToken = await makeAccesstoken(result);
 
-  let res2 = await fetch(
-    "http://localhost:3001/api/v1/auth/users/me",
-    {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": "Bearer " + accessToken.token,
-      },
-      body: JSON.stringify(requestBody),
-    },
-  );
-  const json = await res2.json();
+    const ctx = new Context(app, createMockServerRequest({
+        headerValues: {"content-type": "application/json", "Authorization": `Bearer ${accessToken.token}`},
+        body: JSON.stringify(requestBody),
+    }));
 
-  await db.end();
+  await db.release();
+
+  await authorize(ctx, ()=>{});
+  await updateUser(ctx);
 
   assertEquals(
-    res2.ok,
-    true,
+    ctx.response.status,
+    200,
     "The API did not return a successful response; check server logs",
   );
 });
 
-Deno.test("API Endpoint Test: /auth/recovery", async () => {
-  const requestBody = {
-    "email": "test_case@authcompanion.com",
-  };
-
-  await db.connect();
-
-  const result = await db.query(
-    "SELECT * FROM users WHERE email = $1;",
-    requestBody.email,
-  );
-
-  const accessToken = await makeAccesstoken(result);
-
-  let res2 = await fetch(
-    "http://localhost:3001/api/v1/auth/recovery",
-    {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(requestBody),
-    },
-  );
-  const json = await res2.json();
-
-  await db.end();
-
-  assertEquals(
-    res2.ok,
-    true,
-    "The API did not return a successful response; check server logs",
-  );
-});
+// Deno.test("API Endpoint Test: /auth/recovery", async () => {
+//   const requestBody = {
+//     "email": "test_case@authcompanion.com",
+//   };
+//
+//
+//     const ctx = new Context(app, createMockServerRequest({
+//         headerValues: {"content-type": "application/json" },
+//         body: JSON.stringify(requestBody),
+//     }));
+//
+//   await forgotPassword(ctx)
+//
+//   assertEquals(
+//     ctx.response.status,
+//     200,
+//     "The API did not return a successful response; check server logs",
+//   );
+// });
 
 Deno.test("API Endpoint Test: /auth/recovery/token", async () => {
-  await db.connect();
-
   const result = await db.query(
     "SELECT * FROM users WHERE email = $1;",
     "test_case@authcompanion.com",
@@ -188,55 +233,41 @@ Deno.test("API Endpoint Test: /auth/recovery/token", async () => {
 
   const recoveryToken = await makeRecoverytoken(result);
 
-  let res2 = await fetch(
-    "http://localhost:3001/api/v1/auth/recovery/token",
-    {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ token: recoveryToken.token }),
-    },
-  );
-  const json = await res2.json();
+    const ctx = new Context(app, createMockServerRequest({
+        headerValues: {"content-type": "application/json" },
+        body: JSON.stringify({token: recoveryToken.token}),
+    }));
 
-  await db.end();
+  await db.release();
+
+  await recoverToken(ctx);
 
   assertEquals(
-    res2.ok,
-    true,
+      ctx.response.status,
+      200,
     "The API did not return a successful response; check server logs",
   );
 });
 
 Deno.test("API Endpoint Test: /auth/logout", async () => {
-  await db.connect();
-
   const result = await db.query(
     "SELECT * FROM users WHERE email = $1;",
     "test_case@authcompanion.com",
   );
   const accessToken = await makeAccesstoken(result);
 
-  let res2 = await fetch(
-    "http://localhost:3001/api/v1/auth/logout",
-    {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": "Bearer " + accessToken.token,
-      },
-    },
-  );
-  const json = await res2.json();
+    const ctx = new Context(app, createMockServerRequest({
+        headerValues: {"content-type": "application/json", "Authorization": `Bearer ${accessToken.token}`}}));
 
-  await db.end();
+  await db.release();
 
-  await cleanTestData();
+  await logoutUser(ctx)
 
   assertEquals(
-    res2.ok,
-    true,
+    ctx.response.status,
+    200,
     "The API did not return a successful response; check server logs",
   );
 });
+
+await cleanTestData();

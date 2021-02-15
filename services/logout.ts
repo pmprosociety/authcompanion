@@ -4,8 +4,6 @@ import log from "../helpers/log.ts";
 
 export const logoutUser = async (ctx: any) => {
   try {
-    await db.connect();
-
     const userObj = await db.query(
       `SELECT * FROM "users" WHERE "UUID" = $1;`,
       ctx.state.JWTclaims.id,
@@ -17,7 +15,7 @@ export const logoutUser = async (ctx: any) => {
         Status.BadRequest,
         "Unable to process request, please try again",
       );
-      await db.end();
+      await db.release();
     }
 
     const result = await db.query(
@@ -39,7 +37,7 @@ export const logoutUser = async (ctx: any) => {
         },
       },
     };
-    await db.end();
+    await db.release();
   } catch (err) {
     log.error(err);
     ctx.response.status = err.status | 400;

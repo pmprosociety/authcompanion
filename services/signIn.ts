@@ -27,9 +27,6 @@ export const signIn = async (ctx: any) => {
     superstruct.assert(bodyValue, loginSchema);
 
     const { email, password } = bodyValue;
-
-    await db.connect();
-
     const result = await db.query(
       "SELECT * FROM users WHERE email = $1;",
       email,
@@ -37,7 +34,7 @@ export const signIn = async (ctx: any) => {
 
     if (result.rowCount == 0) {
       ctx.throw(Status.BadRequest, "Bad Request, Please Retry Login");
-      await db.end();
+      await db.release();
     }
 
     const objectRows = result.rowsOfObjects();
@@ -48,7 +45,7 @@ export const signIn = async (ctx: any) => {
         Status.Forbidden,
         "Bad Request, Please Retry Login",
       );
-      await db.end();
+      await db.release();
     }
 
     if (await compare(password, user.password)) {
@@ -72,13 +69,13 @@ export const signIn = async (ctx: any) => {
           },
         },
       };
-      await db.end();
+      await db.release();
     } else {
       ctx.throw(
         Status.BadRequest,
         "Username or Password is Invalid, Please Retry Login",
       );
-      await db.end();
+      await db.release();
     }
   } catch (err) {
     log.error(err);

@@ -10,6 +10,7 @@ import { superstruct } from "../deps.ts";
 export const signUp = async (ctx: any) => {
   try {
     if (!ctx.request.hasBody) {
+      log.warning("No body");
       ctx.throw(Status.BadRequest, "Bad Request");
     }
 
@@ -17,6 +18,7 @@ export const signUp = async (ctx: any) => {
     let bodyValue = await body.value;
 
     if (body.type !== "json") {
+      log.warning("Body not JSON");
       ctx.throw(Status.BadRequest, "Bad Request");
     }
 
@@ -31,19 +33,18 @@ export const signUp = async (ctx: any) => {
 
     const { name, email, password } = bodyValue;
 
-    await db.connect();
-
     const userAlreadyExists = await db.query(
       "SELECT * FROM users WHERE email = $1;",
       email,
     );
 
     if (userAlreadyExists.rowCount !== 0) {
+      log.warning("User already exists");
+      await db.release();
       ctx.throw(
         Status.BadRequest,
-        "Unable to process request, please try again",
+        "Bad Request",
       );
-      await db.end();
     }
 
     const hashpassword = await hash(password);
@@ -81,7 +82,6 @@ export const signUp = async (ctx: any) => {
         },
       },
     };
-    await db.end();
   } catch (err) {
     log.error(err);
 
@@ -94,5 +94,6 @@ export const signUp = async (ctx: any) => {
       }],
     };
   } finally {
+    await db.release();
   }
 };

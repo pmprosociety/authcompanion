@@ -17,7 +17,7 @@ export const updateUser = async (ctx: any) => {
     let bodyValue = await body.value;
 
     if (body.type !== "json") {
-      log.debug("Request is not JSON");
+      log.debug("Request is not` JSON");
       ctx.throw(Status.BadRequest, "Bad Request");
     }
 
@@ -31,8 +31,6 @@ export const updateUser = async (ctx: any) => {
     superstruct.assert(bodyValue, updateSchema);
 
     const { name, email, password } = bodyValue;
-
-    await db.connect();
 
     const userObj = await db.query(
       `SELECT * FROM "users" WHERE "UUID" = $1;`,
@@ -84,7 +82,7 @@ export const updateUser = async (ctx: any) => {
           },
         },
       };
-      await db.end();
+      await db.release();
     } else {
       const result = await db.query(
         `UPDATE "users" SET name = $1, email = $2 WHERE "UUID" = $3 RETURNING *;`,
@@ -118,7 +116,7 @@ export const updateUser = async (ctx: any) => {
           },
         },
       };
-      await db.end();
+      await db.release();
     }
   } catch (err) {
     log.error(err);
