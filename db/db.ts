@@ -1,13 +1,21 @@
 import { Pool } from "../deps.ts";
 import log from "../helpers/log.ts";
+import {
+  DATABASE,
+  DBCONNECTIONS,
+  DBHOSTNAME,
+  DBPASSWORD,
+  DBPORT,
+  DBUSER,
+} from "../config.ts";
 
 const pool = new Pool({
-  user: Deno.env.get("DBUSER"),
-  database: Deno.env.get("DATABASE"),
-  hostname: Deno.env.get("DBHOSTNAME"),
-  password: Deno.env.get("DBPASSWORD"),
-  port: Number(Deno.env.get("DBPORT") ?? 5432),
-}, 20);
+  user: DBUSER,
+  database: DATABASE,
+  hostname: DBHOSTNAME,
+  password: DBPASSWORD,
+  port: Number(DBPORT ?? 5432),
+}, Number(DBCONNECTIONS ?? 20));
 
 const db = await pool.connect();
 

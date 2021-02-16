@@ -10,12 +10,13 @@ import {
 
 import { db } from "../db/db.ts";
 import log from "./log.ts";
+import { ACCESSTOKENKEY, REFRESHTOKENKEY } from "../config.ts";
 
 export async function makeAccesstoken(result: any) {
   var date = new Date();
   date.setHours(date.getHours() + 4);
 
-  const key = Deno.env.get("ACCESSTOKENKEY");
+  const key = ACCESSTOKENKEY;
   if (key != undefined) {
     const objectRows = result.rowsOfObjects();
     const user = objectRows[0];
@@ -44,8 +45,7 @@ export async function makeRefreshtoken(result: any) {
   var date = new Date();
   date.setDate(date.getDate() + 30 * 2);
 
-  const key = Deno.env.get("REFRESHTOKENKEY");
-  if (key != undefined) {
+  if (REFRESHTOKENKEY != undefined) {
     const objectRows = result.rowsOfObjects();
     const user = objectRows[0];
 
@@ -66,16 +66,15 @@ export async function makeRefreshtoken(result: any) {
       exp: getNumericDate(date),
     };
 
-    return await create(jwtheader, jwtpayload, key);
+    return await create(jwtheader, jwtpayload, REFRESHTOKENKEY);
   }
   throw new Error("REFRESHTOKENKEY is invalid");
 }
 
 export async function validateRefreshToken(jwt: any) {
-  const key = Deno.env.get("REFRESHTOKENKEY");
   try {
-    if (key != undefined) {
-      await verify(jwt, key, "HS256");
+    if (REFRESHTOKENKEY != undefined) {
+      await verify(jwt, REFRESHTOKENKEY, "HS256");
       let validatedToken = await decode(jwt);
       return validatedToken;
     }
@@ -88,11 +87,10 @@ export async function validateRefreshToken(jwt: any) {
 }
 
 export async function validateJWT(jwt: any) {
-  const key = Deno.env.get("ACCESSTOKENKEY");
   try {
-    if (key != undefined) {
+    if (ACCESSTOKENKEY != undefined) {
       //verify the jwt (includes signature validation) otherwise throw error
-      await verify(jwt, key, "HS256");
+      await verify(jwt, ACCESSTOKENKEY, "HS256");
 
       //decode the jwt (without signature verfication) otherwise throw error
       let validatedToken = await decode(jwt);
@@ -110,9 +108,7 @@ export async function makeRecoverytoken(result: any) {
   var date = new Date();
   date.setMinutes(date.getMinutes() + 10);
 
-  const key = Deno.env.get("ACCESSTOKENKEY");
-
-  if (key != undefined) {
+  if (ACCESSTOKENKEY != undefined) {
     const objectRows = result.rowsOfObjects();
     const user = objectRows[0];
 
@@ -124,7 +120,7 @@ export async function makeRecoverytoken(result: any) {
       exp: getNumericDate(date),
     };
 
-    const resultingToken = await create(jwtheader, jwtpayload, key);
+    const resultingToken = await create(jwtheader, jwtpayload, ACCESSTOKENKEY);
 
     return {
       token: resultingToken,
