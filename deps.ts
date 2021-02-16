@@ -4,7 +4,7 @@ export {
   Router,
   Status,
 } from "https://deno.land/x/oak@v6.4.2/mod.ts";
-import "https://deno.land/x/dotenv/load.ts"; // Autoload config file
+import "https://deno.land/x/dotenv@v2.0.0/load.ts"; // Autoload config file
 export { Client, Pool } from "https://deno.land/x/postgres@v0.4.6/mod.ts";
 export { compare, hash } from "https://deno.land/x/bcrypt@v0.2.4/mod.ts";
 export {

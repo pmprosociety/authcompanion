@@ -17,7 +17,7 @@ export const updateUser = async (ctx: any) => {
     let bodyValue = await body.value;
 
     if (body.type !== "json") {
-      log.debug("Request is not` JSON");
+      log.debug("Request is not JSON");
       ctx.throw(Status.BadRequest, "Bad Request");
     }
 
