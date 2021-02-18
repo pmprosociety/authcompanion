@@ -1,7 +1,8 @@
 import app from "../app.ts";
 import log from "../helpers/log.ts";
+import { AUTHPORT } from "../config.ts";
 
-const PORT: number = Number(Deno.env.get("PORT") ?? 3000);
+const PORT: number = Number(AUTHPORT ?? 3000);
 const controller = new AbortController();
 const { signal } = controller;
 

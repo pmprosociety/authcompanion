@@ -14,7 +14,7 @@ import { updateUser } from "../services/updateUser.ts";
 import { recoverToken } from "../services/recoverytoken.ts";
 import { logoutUser } from "../services/logout.ts";
 import authorize from "../middlewares/authorize.ts";
-import {forgotPassword} from "../services/forgotPassword.ts";
+import { forgotPassword } from "../services/forgotPassword.ts";
 
 const encoder = new TextEncoder();
 
@@ -180,7 +180,6 @@ Deno.test("API Endpoint Test: /auth/users/me", async () => {
     "password": "mysecretpass",
   };
 
-
   const result = await db.query(
     "SELECT * FROM users WHERE email = $1;",
     requestBody.email,
@@ -188,14 +187,20 @@ Deno.test("API Endpoint Test: /auth/users/me", async () => {
 
   const accessToken = await makeAccesstoken(result);
 
-    const ctx = new Context(app, createMockServerRequest({
-        headerValues: {"content-type": "application/json", "Authorization": `Bearer ${accessToken.token}`},
-        body: JSON.stringify(requestBody),
-    }));
+  const ctx = new Context(
+    app,
+    createMockServerRequest({
+      headerValues: {
+        "content-type": "application/json",
+        "Authorization": `Bearer ${accessToken.token}`,
+      },
+      body: JSON.stringify(requestBody),
+    }),
+  );
 
   await db.release();
 
-  await authorize(ctx, ()=>{});
+  await authorize(ctx, () => {});
   await updateUser(ctx);
 
   assertEquals(
@@ -233,18 +238,21 @@ Deno.test("API Endpoint Test: /auth/recovery/token", async () => {
 
   const recoveryToken = await makeRecoverytoken(result);
 
-    const ctx = new Context(app, createMockServerRequest({
-        headerValues: {"content-type": "application/json" },
-        body: JSON.stringify({token: recoveryToken.token}),
-    }));
+  const ctx = new Context(
+    app,
+    createMockServerRequest({
+      headerValues: { "content-type": "application/json" },
+      body: JSON.stringify({ token: recoveryToken.token }),
+    }),
+  );
 
   await db.release();
 
   await recoverToken(ctx);
 
   assertEquals(
-      ctx.response.status,
-      200,
+    ctx.response.status,
+    200,
     "The API did not return a successful response; check server logs",
   );
 });
@@ -256,12 +264,19 @@ Deno.test("API Endpoint Test: /auth/logout", async () => {
   );
   const accessToken = await makeAccesstoken(result);
 
-    const ctx = new Context(app, createMockServerRequest({
-        headerValues: {"content-type": "application/json", "Authorization": `Bearer ${accessToken.token}`}}));
+  const ctx = new Context(
+    app,
+    createMockServerRequest({
+      headerValues: {
+        "content-type": "application/json",
+        "Authorization": `Bearer ${accessToken.token}`,
+      },
+    }),
+  );
 
   await db.release();
 
-  await logoutUser(ctx)
+  await logoutUser(ctx);
 
   assertEquals(
     ctx.response.status,
