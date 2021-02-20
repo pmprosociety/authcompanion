@@ -58,6 +58,14 @@ jobs:
 
       - name: Run Migrations
         run: deno run -A https://deno.land/x/nessie/cli.ts -d -c nessie.config.ts migrate
+        env:
+          DBHOSTNAME: 127.0.0.1
+          DBPORT: 5432
+          DBPASSWORD: postgres
+          DATABASE: postgres
+          DBUSER: postgres
+          ACCESSTOKENKEY: testkeyplzignore
+          REFRESHTOKENKEY: testkeyplzignore
 
       - name: Run Tests
         run: deno test -A --unstable
