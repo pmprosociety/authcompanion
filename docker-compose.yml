@@ -7,9 +7,9 @@ services:
     restart: always
     environment:
         POSTGRES_PASSWORD: mydbsecretpwd
-    volumes: 
+    volumes:
         - dbdata:/var/lib/postgresql/data
-    ports: 
+    ports:
         - "5432:5432"
 
   adminer:
@@ -18,15 +18,23 @@ services:
     ports:
       - 3000:8080
 
-  api:
+  migrate:
     build: .
-    restart: always
+    image: authcompanion
     depends_on:
       - db
-    volumes: 
+    command: deno run -A  https://deno.land/x/nessie/cli.ts -d -c nessie.config.ts migrate
+
+  api:
+    build: .
+    image: authcompanion
+    restart: always
+    depends_on:
+      - migrate
+    volumes:
       - ./:/app
-    ports: 
+    ports:
       - 3001:3001
-     
-volumes: 
+
+volumes:
      dbdata:
