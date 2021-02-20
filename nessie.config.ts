@@ -2,7 +2,7 @@ import {
   ClientOptions,
   ClientPostgreSQL,
 } from "https://deno.land/x/nessie/mod.ts";
-//import { DATABASE, DBHOSTNAME, DBPASSWORD, DBPORT, DBUSER } from "./config.ts";
+import { DATABASE, DBHOSTNAME, DBPASSWORD, DBPORT, DBUSER } from "./config.ts";
 
 /** These are the default config options. */
 const nessieOptions: ClientOptions = {
@@ -13,11 +13,11 @@ const nessieOptions: ClientOptions = {
 
 /** Select one of the supported clients */
 const clientPg = new ClientPostgreSQL(nessieOptions, {
-  database: Deno.env.get("DATABASE"),
-  hostname: Deno.env.get("DBHOSTNAME"),
-  port: Number(Deno.env.get("DBPORT")),
-  user: Deno.env.get("DBUSER"),
-  password: Deno.env.get("DBPASSWORD"),
+  database: DATABASE,
+  hostname: DBHOSTNAME,
+  port: Number(DBPORT),
+  user: DBUSER,
+  password: DBPASSWORD,
 });
 
 /** This is the final config object */
