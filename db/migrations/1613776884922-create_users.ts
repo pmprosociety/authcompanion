@@ -60,6 +60,13 @@ export default class ExperimentalMigration extends AbstractMigration {
 
   /** Runs on rollback */
   async down(info: Info): Promise<void> {
+    await this.client.query(`
+    
+    DROP TABLE "users";
+
+    DROP FUNCTION "set_current_timestamp_updated_at"()
+    
+    `);
     
   }
 }
