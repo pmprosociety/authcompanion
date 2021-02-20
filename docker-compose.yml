@@ -8,7 +8,6 @@ services:
     environment:
         POSTGRES_PASSWORD: mydbsecretpwd
     volumes: 
-        - ./docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
         - dbdata:/var/lib/postgresql/data
     ports: 
         - "5432:5432"
