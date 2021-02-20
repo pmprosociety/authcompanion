@@ -51,7 +51,7 @@ export const signUp = async (ctx: any) => {
     const jtiClaim = v4.generate();
 
     const result = await db.query(
-      "INSERT INTO users (name, email, password, isactive, refresh_token) VALUES ($1, $2, $3, '1', $4) RETURNING *;",
+      "INSERT INTO users (name, email, password, active, refresh_token) VALUES ($1, $2, $3, '1', $4) RETURNING *;",
       name,
       email,
       hashpassword,

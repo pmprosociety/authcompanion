@@ -5,8 +5,6 @@ import notFound from "./middlewares/notFound.ts";
 import logger from "./middlewares/logger.ts";
 // routes
 import index from "./routes/index.ts";
-import log from "./helpers/log.ts";
-import { db } from "./db/db.ts";
 
 const app = new Application();
 

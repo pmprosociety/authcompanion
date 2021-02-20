@@ -18,4 +18,5 @@ ADD . .
 # Compile the main app so that it doesn't need to be compiled each startup/entry.
 RUN deno cache bin/server.ts
 
+# Start AuthC API Server
 CMD [ "run", "-A", "--unstable", "bin/server.ts" ]
