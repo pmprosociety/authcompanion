@@ -56,8 +56,8 @@ jobs:
       - name: Cache Dependencies
         run: deno cache --unstable deps.ts
 
-      - name: Populate DB
-        run: psql -d postgresql://postgres:postgres@localhost:5432/postgres -f docker-entrypoint-initdb.d/init.sql
+      - name: Run Migrations
+        run: deno run -A https://deno.land/x/nessie/cli.ts -d -c nessie.config.ts migrate
 
       - name: Run Tests
         run: deno test -A --unstable

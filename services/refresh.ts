@@ -31,7 +31,7 @@ export const refresh = async (ctx: any) => {
       const objectRows = result.rowsOfObjects();
       const user = objectRows[0];
 
-      if (!user.isactive) {
+      if (!user.active) {
         ctx.throw(Status.Forbidden, "User has been disabled");
         await db.release();
       }

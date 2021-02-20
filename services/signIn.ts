@@ -40,7 +40,7 @@ export const signIn = async (ctx: any) => {
     const objectRows = result.rowsOfObjects();
     const user = objectRows[0];
 
-    if (!user.isactive) {
+    if (!user.active) {
       ctx.throw(
         Status.Forbidden,
         "Bad Request, Please Retry Login",
