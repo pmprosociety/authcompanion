@@ -56,8 +56,11 @@ jobs:
       - name: Cache Dependencies
         run: deno cache --unstable deps.ts
 
+      - name: Install Migrate
+        run: wget https://github.com/golang-migrate/migrate/releases/download/v4.14.1/migrate.linux-amd64.tar.gz; tar xvfz migrate.linux-amd64.tar.gz
+
       - name: Run Migrations
-        run: deno run -A https://deno.land/x/nessie/cli.ts -d -c nessie.config.ts migrate
+        run: ./migrate.linux-amd64 -source file://db/migrations -database "postgres://$DBUSER:$DBPASSWORD@$DBHOSTNAME:$DBPORT/$DATABASE?sslmode=disable" up
         env:
           DBHOSTNAME: 127.0.0.1
           DBPORT: 5432
