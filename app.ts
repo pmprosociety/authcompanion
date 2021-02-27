@@ -8,9 +8,16 @@ import index from "./routes/index.ts";
 
 const app = new Application();
 
-// app.use(organ());
 app.use(logger.logger);
 app.use(logger.responseTime);
+
+//Enable CORS
+app.use((ctx, next) => {
+    ctx.response.headers.set('Access-Control-Allow-Origin', '*')
+    ctx.response.headers.set('Access-Control-Allow-Headers', 'Content-type,Accept,X-Access-Token,X-Key')
+
+    return next()
+  })
 
 app.use(index.routes());
 app.use(index.allowedMethods());
