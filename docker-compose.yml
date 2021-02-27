@@ -16,14 +16,20 @@ services:
     ports:
       - 3000:8080
 
+  wait:
+    image: dokku/wait
+    command: -c db:5432
+    depends_on:
+      - db
+
   migrate:
     build: .
     image: authcompanion
     env_file:
       - .env
     depends_on:
-      - db
-    command: deno run -A  https://deno.land/x/nessie/cli.ts -d -c nessie.config.ts migrate
+      - wait
+    command: ./migrate.linux-amd64 -source file://db/migrations -database "postgres://$DBUSER:$DBPASSWORD@$DBHOSTNAME:$DBPORT/$DATABASE?sslmode=disable" up
 
   api:
     build: .
@@ -36,7 +42,7 @@ services:
     volumes:
       - ./:/app
     ports:
-      - 3001:3001
+      - 127.0.0.1:3001:3001
 
 volumes:
      dbdata:
