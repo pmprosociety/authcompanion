@@ -69,6 +69,7 @@ jobs:
           DBUSER: postgres
           ACCESSTOKENKEY: testkeyplzignore
           REFRESHTOKENKEY: testkeyplzignore
+          SECURE: false
 
       - name: Run Tests
         run: deno test -A --unstable
@@ -80,4 +81,5 @@ jobs:
           DBUSER: postgres
           ACCESSTOKENKEY: testkeyplzignore
           REFRESHTOKENKEY: testkeyplzignore
+          SECURE: false
 

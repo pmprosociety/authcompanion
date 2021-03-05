@@ -173,6 +173,7 @@ Deno.test("API Endpoint Test: /auth/refresh", async () => {
   );
 });
 
+
 Deno.test("API Endpoint Test: /auth/users/me", async () => {
   const requestBody = {
     "name": "Authy Man Testcases",
@@ -207,6 +208,33 @@ Deno.test("API Endpoint Test: /auth/users/me", async () => {
     ctx.response.status,
     200,
     "The API did not return a successful response; check server logs",
+  );
+});
+
+Deno.test("API Endpoint Test: /auth/users/me No Auth Header", async () => {
+  const requestBody = {
+    "name": "Authy Man Testcases",
+    "email": "test_case@authcompanion.com",
+    "password": "mysecretpass",
+  };
+
+  const ctx = new Context(
+      app,
+      createMockServerRequest({
+        headerValues: {
+          "content-type": "application/json",
+        },
+        body: JSON.stringify(requestBody),
+      }),
+  );
+
+  await authorize(ctx, () => {});
+  await updateUser(ctx);
+
+  assertEquals(
+      ctx.response.status,
+      401,
+      "The API did not return a proper response; check server logs",
   );
 });
 

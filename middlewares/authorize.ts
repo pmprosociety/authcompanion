@@ -5,12 +5,13 @@ import log from "../helpers/log.ts";
 export default async (ctx: any, next: any) => {
   try {
     const authHeader = ctx.request.headers.get("authorization");
-    const userJWT = authHeader.split(" ")[1];
 
     if (!authHeader) {
       log.debug("Missing Authentication header");
       ctx.throw(Status.Unauthorized, "Unauthorized");
     }
+
+    const userJWT = authHeader.split(" ")[1];
 
     if (!userJWT) {
       log.debug("Missing valid JWT in Authentication header");
