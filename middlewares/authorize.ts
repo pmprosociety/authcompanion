@@ -23,6 +23,7 @@ export default async (ctx: any, next: any) => {
 
     await next();
   } catch (err) {
+    log.error(err);
     ctx.response.status = err.status | 400;
     ctx.response.type = "json";
     ctx.response.body = {
