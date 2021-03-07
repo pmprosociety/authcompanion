@@ -5,6 +5,7 @@ import notFound from "./middlewares/notFound.ts";
 import logger from "./middlewares/logger.ts";
 // routes
 import index from "./routes/index.ts";
+import {ORIGIN} from "./config.ts";
 
 const app = new Application();
 
@@ -13,9 +14,9 @@ app.use(logger.responseTime);
 
 //Enable CORS
 app.use((ctx, next) => {
-    ctx.response.headers.set('Access-Control-Allow-Origin', '*')
+    ctx.response.headers.set('Access-Control-Allow-Origin', ORIGIN ?? '*')
     ctx.response.headers.set('Access-Control-Allow-Credentials', 'true')
-    ctx.response.headers.set('Access-Control-Allow-Headers', 'Content-type,Authorization')
+    ctx.response.headers.set('Access-Control-Allow-Headers', 'Content-type,Authorization,Cookie')
 
     return next()
   })

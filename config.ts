@@ -4,6 +4,10 @@ import "https://deno.land/x/dotenv@v2.0.0/load.ts"; // Autoload config file
 //Server related environment variables
 //Authcompanion port
 export const AUTHPORT = Deno.env.get("PORT");
+//CORS Allowed Origin
+export const ORIGIN = Deno.env.get("ORIGIN");
+//Secure Cookie
+export const SECURE = Deno.env.get("SECURE");
 
 //Database related environment variables
 //Database user

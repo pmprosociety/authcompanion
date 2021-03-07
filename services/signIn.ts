@@ -4,6 +4,7 @@ import { makeAccesstoken, makeRefreshtoken } from "../helpers/jwtutils.ts";
 import { db } from "../db/db.ts";
 import log from "../helpers/log.ts";
 import { superstruct } from "../deps.ts";
+import {SECURE} from "../config.ts";
 
 export const signIn = async (ctx: any) => {
   try {
@@ -33,7 +34,7 @@ export const signIn = async (ctx: any) => {
     );
 
     if (result.rowCount == 0) {
-      ctx.throw(Status.BadRequest, "Bad Request, Please Retry Login");
+      ctx.throw(Status.Forbidden, "Bad Request, Please Retry Login");
       await db.release();
     }
 
@@ -51,12 +52,18 @@ export const signIn = async (ctx: any) => {
     if (await compare(password, user.password)) {
       const accessToken = await makeAccesstoken(result);
       const refreshToken = await makeRefreshtoken(result);
+      const date = new Date();
+      date.setTime(date.getTime() + (7 * 24 * 60 * 60 * 1000)) // TODO: Make configurable now, set to 7 days
 
       ctx.response.status = Status.OK;
+
       ctx.cookies.set("refreshToken", refreshToken, {
         httpOnly: true,
-        expires: new Date("2022-01-01T00:00:00+00:00"),
+        expires: date,
+        secure: SECURE?.toLowerCase() !== 'false',
+        sameSite: 'none',
       });
+
       ctx.response.body = {
         data: {
           id: user.UUID,
