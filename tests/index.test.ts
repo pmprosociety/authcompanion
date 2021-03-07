@@ -229,7 +229,7 @@ Deno.test("API Endpoint Test: /auth/users/me No Auth Header", async () => {
   );
 
   await authorize(ctx, () => {});
-  await updateUser(ctx);
+ // await updateUser(ctx);
 
   assertEquals(
       ctx.response.status,
