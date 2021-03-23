@@ -42,7 +42,7 @@ services:
     volumes:
       - ./:/app
     ports:
-      - 127.0.0.1:3001:3001
+      - 127.0.0.1:3002:3002
 
 volumes:
      dbdata:

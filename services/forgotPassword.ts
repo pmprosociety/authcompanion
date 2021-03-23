@@ -64,7 +64,9 @@ export const forgotPassword = async (ctx: any) => {
         to: user.email,
         subject: "Account Recovery",
         content:
-          `Hello </br> Please use the following link to sign into your account: <a href="${RECOVERYURL}?token=${recoveryToken.token}">Click Here</a>`,
+          `Hello 👋 </br>
+          You are receiving this email because you have attempted to recover your account</br>
+          Please use the following link to login again: <a href="${RECOVERYURL}?token=${recoveryToken.token}">Click Here</a>`,
       });
       await client.close();
 
