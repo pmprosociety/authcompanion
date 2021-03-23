@@ -13,6 +13,7 @@ app.use(logger.logger);
 app.use(logger.responseTime);
 
 //Enable CORS
+// @ts-ignore: Implementing ts features at later date
 app.use((ctx, next) => {
     ctx.response.headers.set('Access-Control-Allow-Origin', ORIGIN ?? '*')
     ctx.response.headers.set('Access-Control-Allow-Credentials', 'true')

@@ -83,10 +83,10 @@ needs. The server include:
   flow which includes a special link for recovering an account quickly. The
   user's email is used to recover the account.
 - [x] **Token Lifecycle & Logout:** Keep the user's token fresh when using the
-  application. When done, securely log them out.
+  application. When a user is done in your app, securely log them out.
 
 Note: AuthCompanion ships without HTML Rendering, so you'll need to bring your
-own UI framework to make use of these feature APIs.
+own UI framework to make use of these feature APIs. You can use the demo below as a template or idea of how to get started.
 
 ## Who is this for?
 
@@ -98,9 +98,14 @@ without having to study docs for hours.
 Think of this server as a base template for getting your application started
 with user management. AuthCompanion will help you build web application FASTER.
 
+## Demo
+
+If you'd like to take a look at a sample AuthCompanion implementation or even just to test drive the APIs, load up the Vue 3 + Vite + TailwindCSS app at the repository here:
+https://github.com/pmprosociety/authcompanion-vue-starter
+
 ## Related Readings
 
-Familiarize yourself with token-based authentication using JSON Web Tokens.
+Be sure to familiarize yourself with token-based authentication using JSON Web Tokens.
 
 - [The Ultimate Guide to handling JWTs on frontend
   clients](https://hasura.io/blog/best-practices-of-using-jwt-with-graphql/)
