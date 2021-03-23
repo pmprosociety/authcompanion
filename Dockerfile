@@ -1,6 +1,6 @@
 FROM hayd/alpine-deno:1.7.2
 
-EXPOSE 3000
+EXPOSE 3002
 
 WORKDIR /app
 RUN wget https://github.com/golang-migrate/migrate/releases/download/v4.14.1/migrate.linux-amd64.tar.gz; tar xvfz migrate.linux-amd64.tar.gz

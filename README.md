@@ -111,7 +111,7 @@ Familiarize yourself with token-based authentication using JSON Web Tokens.
 
 ### Server
 
-http://localhost:300/api/v1/
+http://localhost:3002/api/v1/
 
 ### Paths
 
@@ -186,7 +186,7 @@ login.
 
 Description: Only the user's refresh token will be invalidated using this route.
 Authorization tokens are still valid for the period of their expiration date.
-The UI responsible for implementation of these APIs should remove the
+This means, the UI is responsible for implementation of these APIs should remove the
 Authorization token from the application memory and require the user to login to
 receive a new token.
 
