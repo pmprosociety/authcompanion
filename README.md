@@ -5,7 +5,7 @@
 
 <h2 align="center">AuthCompanion</h2>
 
-<p align="center"> Effortless, open source, identity and user management for software integrators
+<p align="center"> An effortless, open source, identity and user management server
 </p>
 
 <div align="center">
@@ -42,8 +42,7 @@ valid credentials and the server returns a signed token.
 
 ### Docker Deployment
 
-To run AuthCompanion, download the source code or clone using git from this
-repository.
+To run AuthCompanion, first clone using git from this repository.
 
 ```sh
 git clone https://github.com/pmprosociety/authcompanion.git
@@ -61,8 +60,7 @@ cp env.example .env
 Ensure Docker is installed - link if you need it:
 https://docs.docker.com/get-docker/
 
-Spin up AuthCompanion by navigating to the main project directory and running
-the docker command:
+Spin up AuthCompanion by running this docker command:
 
 ```sh
 docker-compose up
@@ -73,39 +71,44 @@ docker-compose up
 ## Features
 
 AuthCompanion aims to satisfy your most common identity and user management
-needs. The server include:
+needs for single factor authentication. The server includes APIs for:
 
 - [x] **Login and Registration:** Create and sign into accounts using email and
   password - users are stored in AuthCompanion's Postgres database.
 - [x] **Profile and Credentials Management:** Update the password and profile
-  information of your users with AuthCompanion's REST APIs.
-- [x] **Account Recovery:** Restore user access using the **Forgot Password**
-  flow which includes a special link for recovering an account quickly. The
-  user's email is used to recover the account.
-- [x] **Token Lifecycle & Logout:** Keep the user's token fresh when using the
-  application. When a user is done in your app, securely log them out.
+  information of your users using AuthCompanion's REST APIs.
+- [x] **Account Recovery:** Restore a user's access to their account using the
+  **Forgot Password** flow. This flow includes a special link for recovering an
+  account quickly.
+- [x] **Token Lifecycle & Logout:** Keep the user's token refreshed while they
+  are using your application. Then, when a user is done in your app, securely
+  log them out.
 
-Note: AuthCompanion ships without HTML Rendering, so you'll need to bring your
-own UI framework to make use of these feature APIs. You can use the demo below as a template or idea of how to get started.
+⚠️ Note: AuthCompanion ships without HTML Rendering, so you'll need to bring
+your own UI framework to make use of these feature APIs. We have a demo below
+that can help get you started.
 
 ## Who is this for?
 
-AuthCompanion’s default configuration strives to be secure, sane and reliable
-for production. Configuration changes are kept to a minimum, ensuring that
-Authcompanion can start-up quickly and run smoothly in any environment...
-without having to study docs for hours.
+AuthCompanion will help you build web application FASTER.
 
-Think of this server as a base template for getting your application started
-with user management. AuthCompanion will help you build web application FASTER.
+The default configuration strives to be secure, sane and reliable for
+production. We ensure that AuthCompanion can start-up quickly and run smoothly
+in any environment... without having to study docs for hours.
+
+Think of this server as a base template for getting your new applications
+started with user management.
 
 ## Demo
 
-If you'd like to take a look at a sample AuthCompanion implementation or even just to test drive the APIs, load up the Vue 3 + Vite + TailwindCSS app at the repository here:
-https://github.com/pmprosociety/authcompanion-vue-starter
+The vue starter app is an example UI to help guide you in implementing AuthCompanion's APIs: https://github.com/pmprosociety/authcompanion-vue-starter
+
+(uses Vue 3 + Vite + Tailwind CSS)
 
 ## Related Readings
 
-Be sure to familiarize yourself with token-based authentication using JSON Web Tokens.
+Be sure to familiarize yourself with token-based authentication using JSON Web
+Tokens.
 
 - [The Ultimate Guide to handling JWTs on frontend
   clients](https://hasura.io/blog/best-practices-of-using-jwt-with-graphql/)
@@ -133,7 +136,7 @@ Description: Register your first user.
 
 ### /auth/login
 
-Description: If the request has a valid username and password, return a JWT
+Description: If the request provides a valid username and password, return a JWT
 access token and set a refresh token (as a http only cookie).
 
 **POST** Request Body:
@@ -191,9 +194,9 @@ login.
 
 Description: Only the user's refresh token will be invalidated using this route.
 Authorization tokens are still valid for the period of their expiration date.
-This means, the UI is responsible for implementation of these APIs should remove the
-Authorization token from the application memory and require the user to login to
-receive a new token.
+This means, the UI is responsible for implementation of these APIs should remove
+the Authorization token from the application memory and require the user to
+login to receive a new token.
 
 **GET** Request Body: None Required
 
