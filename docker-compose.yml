@@ -4,6 +4,7 @@ version: '3.8'
 services:
   db:
     image: postgres:latest
+    container_name: authc-postgres
     restart: always
     environment:
         POSTGRES_PASSWORD: mydbsecretpwd
@@ -17,6 +18,7 @@ services:
 
   adminer:
     image: adminer
+    container_name: adminer
     restart: always
     ports:
       - 3000:8080
@@ -24,6 +26,7 @@ services:
   migrate:
     build: .
     image: authcompanion
+    container_name: db-migration
     env_file:
       - .env
     depends_on:
@@ -33,6 +36,7 @@ services:
 
   api:
     build: .
+    container_name: authc-api
     env_file:
       - .env
     image: authcompanion
