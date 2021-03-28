@@ -2,11 +2,11 @@ import app from "../app.ts";
 import log from "../helpers/log.ts";
 import { AUTHPORT } from "../config.ts";
 
-const PORT: number = Number(AUTHPORT ?? 3000);
+const PORT: number = Number(AUTHPORT ?? 3002);
 const controller = new AbortController();
 const { signal } = controller;
 
-// @ts-ignore: Implementing ts features at later date
+// @ts-ignore
 app.addEventListener("listen", ({ secure, hostname, port }) => {
   const protocol = secure ? "https://" : "http://";
   log.debug(`HTTPS is ${secure ? "on" : "off"}`);
@@ -34,5 +34,5 @@ log.info("🛑 Stopping AuthCompanion");
 controller.abort();
 // Wait for Oak to shutdown
 await server;
-log.info("👋 Good bye");
+log.info("Good bye 👋 ");
 Deno.exit();

@@ -9,12 +9,12 @@ import { logoutUser } from "../services/logout.ts";
 
 import authorize from "../middlewares/authorize.ts";
 
-//API path
+//API Path
 const pathPrefix = "/api/v1/";
 
 const router = new Router({ prefix: pathPrefix });
 
-//auth routes
+//API Server Routes
 router
   .post("auth/register", signUp)
   .post("auth/login", signIn)

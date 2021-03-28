@@ -1,5 +1,4 @@
 import { Pool } from "../deps.ts";
-import log from "../helpers/log.ts";
 import {
   DATABASE,
   DBCONNECTIONS,
