@@ -7,6 +7,11 @@ services:
     restart: always
     environment:
         POSTGRES_PASSWORD: mydbsecretpwd
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
     volumes:
         - dbdata:/var/lib/postgresql/data
 
@@ -16,19 +21,14 @@ services:
     ports:
       - 3000:8080
 
-  wait:
-    image: dokku/wait
-    command: -c db:5432
-    depends_on:
-      - db
-
   migrate:
     build: .
     image: authcompanion
     env_file:
       - .env
     depends_on:
-      - wait
+        db:
+          condition: service_healthy
     command: ./migrate.linux-amd64 -source file://db/migrations -database "postgres://$DBUSER:$DBPASSWORD@$DBHOSTNAME:$DBPORT/$DATABASE?sslmode=disable" up
 
   api:
