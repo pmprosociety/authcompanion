@@ -101,7 +101,8 @@ started with user management.
 
 ## Demo
 
-The vue starter app is an example UI to help guide you in implementing AuthCompanion's APIs: https://github.com/pmprosociety/authcompanion-vue-starter
+The vue starter app is an example UI to help guide you in implementing
+AuthCompanion's APIs: https://github.com/pmprosociety/authcompanion-vue-starter
 
 (uses Vue 3 + Vite + Tailwind CSS)
 

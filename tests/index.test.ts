@@ -173,7 +173,6 @@ Deno.test("API Endpoint Test: /auth/refresh", async () => {
   );
 });
 
-
 Deno.test("API Endpoint Test: /auth/users/me", async () => {
   const requestBody = {
     "name": "Authy Man Testcases",
@@ -219,22 +218,22 @@ Deno.test("API Endpoint Test: /auth/users/me No Auth Header", async () => {
   };
 
   const ctx = new Context(
-      app,
-      createMockServerRequest({
-        headerValues: {
-          "content-type": "application/json",
-        },
-        body: JSON.stringify(requestBody),
-      }),
+    app,
+    createMockServerRequest({
+      headerValues: {
+        "content-type": "application/json",
+      },
+      body: JSON.stringify(requestBody),
+    }),
   );
 
   await authorize(ctx, () => {});
- // await updateUser(ctx);
+  // await updateUser(ctx);
 
   assertEquals(
-      ctx.response.status,
-      401,
-      "The API did not return a proper response; check server logs",
+    ctx.response.status,
+    401,
+    "The API did not return a proper response; check server logs",
   );
 });
 

@@ -4,7 +4,7 @@ import { makeAccesstoken, makeRefreshtoken } from "../helpers/jwtutils.ts";
 import { db } from "../db/db.ts";
 import log from "../helpers/log.ts";
 import { superstruct } from "../deps.ts";
-import {SECURE} from "../config.ts";
+import { SECURE } from "../config.ts";
 
 export const signIn = async (ctx: any) => {
   try {
@@ -53,14 +53,15 @@ export const signIn = async (ctx: any) => {
       const refreshToken = await makeRefreshtoken(result);
       const date = new Date();
       date.setTime(date.getTime() + (7 * 24 * 60 * 60 * 1000)) // TODO: Make configurable now, set to 7 days
+      ;
 
       ctx.response.status = Status.OK;
 
       ctx.cookies.set("refreshToken", refreshToken, {
         httpOnly: true,
         expires: date,
-        secure: SECURE?.toLowerCase() !== 'false',
-        sameSite: 'none',
+        secure: SECURE?.toLowerCase() !== "false",
+        sameSite: "none",
       });
 
       ctx.response.body = {

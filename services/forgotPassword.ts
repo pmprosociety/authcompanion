@@ -63,8 +63,7 @@ export const forgotPassword = async (ctx: any) => {
         // @ts-ignore
         to: user.email,
         subject: "Account Recovery",
-        content:
-          `Hello 👋 </br>
+        content: `Hello 👋 </br>
           You are receiving this email because you have attempted to recover your account</br>
           Please use the following link to login again: <a href="${RECOVERYURL}?token=${recoveryToken.token}">Click Here</a>`,
       });
