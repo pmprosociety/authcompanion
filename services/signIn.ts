@@ -28,7 +28,7 @@ export const signIn = async (ctx: any) => {
     superstruct.assert(bodyValue, loginSchema);
 
     const { email, password } = bodyValue;
-    const result = await db.query(
+    const result = await db.queryObject(
       "SELECT * FROM users WHERE email = $1;",
       email,
     );
@@ -38,8 +38,7 @@ export const signIn = async (ctx: any) => {
       await db.release();
     }
 
-    const objectRows = result.rowsOfObjects();
-    const user = objectRows[0];
+    const user = result.rows[0];
 
     if (!user.active) {
       ctx.throw(
@@ -48,7 +47,7 @@ export const signIn = async (ctx: any) => {
       );
       await db.release();
     }
-
+    // @ts-ignore
     if (await compare(password, user.password)) {
       const accessToken = await makeAccesstoken(result);
       const refreshToken = await makeRefreshtoken(result);

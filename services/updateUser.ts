@@ -32,7 +32,7 @@ export const updateUser = async (ctx: any) => {
 
     const { name, email, password } = bodyValue;
 
-    const userObj = await db.query(
+    const userObj = await db.queryObject(
       `SELECT * FROM "users" WHERE "UUID" = $1;`,
       ctx.state.JWTclaims.id,
     );
@@ -49,7 +49,7 @@ export const updateUser = async (ctx: any) => {
       const hashpassword = await hash(password);
       const jtiClaim = v4.generate();
 
-      const result = await db.query(
+      const result = await db.queryObject(
         `Update "users" SET name = $1, email = $2, password = $3, refresh_token = $4 WHERE "UUID" = $5 RETURNING *;`,
         name,
         email,
@@ -58,8 +58,7 @@ export const updateUser = async (ctx: any) => {
         ctx.state.JWTclaims.id,
       );
 
-      const objectRows = result.rowsOfObjects();
-      const user = objectRows[0];
+      const user = result.rows[0];
 
       const accessToken = await makeAccesstoken(result);
       const refreshToken = await makeRefreshtoken(result);
@@ -84,15 +83,14 @@ export const updateUser = async (ctx: any) => {
       };
       await db.release();
     } else {
-      const result = await db.query(
+      const result = await db.queryArray(
         `UPDATE "users" SET name = $1, email = $2 WHERE "UUID" = $3 RETURNING *;`,
         name,
         email,
         ctx.state.JWTclaims.id,
       );
 
-      const objectRows = result.rowsOfObjects();
-      const user = objectRows[0];
+      const user = result.rows[0];
 
       const accessToken = await makeAccesstoken(result);
       const refreshToken = await makeRefreshtoken(result);
@@ -105,11 +103,15 @@ export const updateUser = async (ctx: any) => {
       ctx.response.status = Status.OK;
       ctx.response.body = {
         data: {
+          // @ts-ignore
           id: user.UUID,
           type: "Updated User",
           attributes: {
+            // @ts-ignore
             name: user.name,
+            // @ts-ignore
             email: user.email,
+            // @ts-ignore
             updated_at: user.updated_at,
             access_token: accessToken.token,
             access_token_expiry: accessToken.expiration,

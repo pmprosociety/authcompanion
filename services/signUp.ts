@@ -33,7 +33,7 @@ export const signUp = async (ctx: any) => {
 
     const { name, email, password } = bodyValue;
 
-    const userAlreadyExists = await db.query(
+    const userAlreadyExists = await db.queryObject(
       "SELECT * FROM users WHERE email = $1;",
       email,
     );
@@ -50,7 +50,7 @@ export const signUp = async (ctx: any) => {
     const hashpassword = await hash(password);
     const jtiClaim = v4.generate();
 
-    const result = await db.query(
+    const result = await db.queryArray(
       "INSERT INTO users (name, email, password, active, refresh_token) VALUES ($1, $2, $3, '1', $4) RETURNING *;",
       name,
       email,
@@ -58,8 +58,7 @@ export const signUp = async (ctx: any) => {
       jtiClaim,
     );
 
-    const objectRows = result.rowsOfObjects();
-    const user = objectRows[0];
+    const user = result.rows[0];
 
     const accessToken = await makeAccesstoken(result);
     const refreshToken = await makeRefreshtoken(result);
@@ -71,11 +70,15 @@ export const signUp = async (ctx: any) => {
     });
     ctx.response.body = {
       data: {
+        // @ts-ignore
         id: user.UUID,
         type: "Register",
         attributes: {
+          // @ts-ignore
           name: user.name,
+          // @ts-ignore
           email: user.email,
+          // @ts-ignore
           created_at: user.created_at,
           access_token: accessToken.token,
           access_token_expiry: accessToken.expiration,

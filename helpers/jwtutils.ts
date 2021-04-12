@@ -18,8 +18,7 @@ export async function makeAccesstoken(result: any) {
 
   const key = ACCESSTOKENKEY;
   if (key != undefined) {
-    const objectRows = result.rowsOfObjects();
-    const user = objectRows[0];
+    const user = result.rows[0];
 
     const jwtheader: Header = { alg: "HS256", typ: "JWT" };
     const jwtpayload: Payload = {
@@ -46,12 +45,11 @@ export async function makeRefreshtoken(result: any) {
   date.setDate(date.getDate() + 30 * 2);
 
   if (REFRESHTOKENKEY != undefined) {
-    const objectRows = result.rowsOfObjects();
-    const user = objectRows[0];
+    const user = result.rows[0];
 
     const newjtiClaim = v4.generate();
 
-    await db.query(
+    await db.queryObject(
       "UPDATE users SET refresh_token = $1 WHERE refresh_token = $2 RETURNING *;",
       newjtiClaim,
       user.refresh_token,
@@ -109,8 +107,7 @@ export async function makeRecoverytoken(result: any) {
   date.setMinutes(date.getMinutes() + 10);
 
   if (ACCESSTOKENKEY != undefined) {
-    const objectRows = result.rowsOfObjects();
-    const user = objectRows[0];
+    const user = result.rows[0];
 
     const jwtheader: Header = { alg: "HS256", typ: "JWT" };
     const jwtpayload: Payload = {

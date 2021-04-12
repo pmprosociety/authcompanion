@@ -19,7 +19,7 @@ import { forgotPassword } from "../services/forgotPassword.ts";
 const encoder = new TextEncoder();
 
 async function cleanTestData() {
-  const result = await db.query(
+  const result = await db.queryObject(
     "DELETE FROM users WHERE email = $1;",
     "test_case@authcompanion.com",
   );
@@ -146,7 +146,7 @@ Deno.test("API Endpoint Test: /auth/login", async () => {
 });
 
 Deno.test("API Endpoint Test: /auth/refresh", async () => {
-  const result = await db.query(
+  const result = await db.queryObject(
     "SELECT * FROM users WHERE email = $1;",
     "test_case@authcompanion.com",
   );
@@ -181,7 +181,7 @@ Deno.test("API Endpoint Test: /auth/users/me", async () => {
     "password": "mysecretpass",
   };
 
-  const result = await db.query(
+  const result = await db.queryObject(
     "SELECT * FROM users WHERE email = $1;",
     requestBody.email,
   );
@@ -259,7 +259,7 @@ Deno.test("API Endpoint Test: /auth/users/me No Auth Header", async () => {
 // });
 
 Deno.test("API Endpoint Test: /auth/recovery/token", async () => {
-  const result = await db.query(
+  const result = await db.queryObject(
     "SELECT * FROM users WHERE email = $1;",
     "test_case@authcompanion.com",
   );
@@ -286,7 +286,7 @@ Deno.test("API Endpoint Test: /auth/recovery/token", async () => {
 });
 
 Deno.test("API Endpoint Test: /auth/logout", async () => {
-  const result = await db.query(
+  const result = await db.queryObject(
     "SELECT * FROM users WHERE email = $1;",
     "test_case@authcompanion.com",
   );

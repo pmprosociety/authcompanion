@@ -4,7 +4,7 @@ import log from "../helpers/log.ts";
 
 export const logoutUser = async (ctx: any) => {
   try {
-    const userObj = await db.query(
+    const userObj = await db.queryObject(
       `SELECT * FROM "users" WHERE "UUID" = $1;`,
       ctx.state.JWTclaims.id,
     );
@@ -18,21 +18,23 @@ export const logoutUser = async (ctx: any) => {
       await db.release();
     }
 
-    const result = await db.query(
+    const result = await db.queryArray(
       `Update "users" SET "refresh_token" = '' WHERE "UUID" = $1 RETURNING *;`,
       ctx.state.JWTclaims.id,
     );
 
-    const objectRows = result.rowsOfObjects();
-    const user = objectRows[0];
+    const user = result.rows[0];
 
     ctx.response.status = Status.OK;
     ctx.response.body = {
       data: {
+        // @ts-ignore
         id: user.UUID,
         type: "Logout User",
         attributes: {
+          // @ts-ignore
           name: user.name,
+          // @ts-ignore
           email: user.email,
         },
       },

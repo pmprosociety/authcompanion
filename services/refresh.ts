@@ -18,7 +18,7 @@ export const refresh = async (ctx: any) => {
     let validatedjwt = await validateRefreshToken(refreshToken);
 
     if (validatedjwt) {
-      const result = await db.query(
+      const result = await db.queryArray(
         "SELECT * FROM users WHERE refresh_token = $1;",
         validatedjwt?.payload.jti,
       );
@@ -28,9 +28,9 @@ export const refresh = async (ctx: any) => {
         await db.release();
       }
 
-      const objectRows = result.rowsOfObjects();
-      const user = objectRows[0];
+      const user = result.rows[0];
 
+      // @ts-ignore
       if (!user.active) {
         ctx.throw(Status.Forbidden, "User has been disabled");
         await db.release();
@@ -44,11 +44,14 @@ export const refresh = async (ctx: any) => {
         httpOnly: true,
         expires: new Date("2022-01-01T00:00:00+00:00"),
       });
+
       ctx.response.body = {
         data: {
+          // @ts-ignore
           id: user.UUID,
           type: "Refresh",
           attributes: {
+            // @ts-ignore
             email: user.email,
             access_token: accessToken.token,
             access_token_expiry: accessToken.expiration,

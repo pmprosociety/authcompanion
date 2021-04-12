@@ -43,13 +43,12 @@ export const forgotPassword = async (ctx: any) => {
     superstruct.assert(bodyValue, recoverySchema);
 
     const { email } = bodyValue;
-    const userObj = await db.query(
+    const userObj = await db.queryArray(
       "SELECT * FROM users WHERE email = $1;",
       email,
     );
 
-    const objectRows = userObj.rowsOfObjects();
-    const user = objectRows[0];
+    const user = userObj.rows[0];
 
     //if the request has a user that exists in DB, issue an account recovery email
     if (userObj.rowCount !== 0) {
@@ -61,6 +60,7 @@ export const forgotPassword = async (ctx: any) => {
 
       await client.send({
         from: FROMADDRESS ?? "no-reply@example.com",
+        // @ts-ignore
         to: user.email,
         subject: "Account Recovery",
         content:
