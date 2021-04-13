@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { Status } from "../deps.ts";
 import {
   makeAccesstoken,
@@ -15,29 +16,29 @@ export const refresh = async (ctx: any) => {
       ctx.throw(Status.BadRequest, "No Refresh Token Found");
     }
 
-    let validatedjwt = await validateRefreshToken(refreshToken);
+    let validatedjwt = await validateRefreshToken(refreshToken);    
 
     if (validatedjwt) {
-      const result = await db.queryArray(
-        "SELECT * FROM users WHERE refresh_token = $1;",
-        validatedjwt?.payload.jti,
-      );
-
-      if (result.rowCount == 0) {
+      const userObj = await db.queryObject({
+        text: `SELECT name, email, "UUID", refresh_token, active, created_at, updated_at FROM users WHERE refresh_token = $1;`,
+        args: [validatedjwt?.payload.jti],
+        fields: ["name", "email", "UUID", "refresh_token", "active", "created_at", "updated_at"]
+      });
+      
+      if (userObj.rowCount == 0) {
         ctx.throw(Status.BadRequest, "Invalid Refresh Token");
         await db.release();
       }
 
-      const user = result.rows[0];
+      const user = userObj.rows[0];
 
-      // @ts-ignore
       if (!user.active) {
         ctx.throw(Status.Forbidden, "User has been disabled");
         await db.release();
       }
 
-      const accessToken = await makeAccesstoken(result);
-      const newRefreshToken = await makeRefreshtoken(result);
+      const accessToken = await makeAccesstoken(userObj);
+      const newRefreshToken = await makeRefreshtoken(userObj);
 
       ctx.response.status = Status.OK;
       ctx.cookies.set("refreshToken", newRefreshToken, {
@@ -47,12 +48,12 @@ export const refresh = async (ctx: any) => {
 
       ctx.response.body = {
         data: {
-          // @ts-ignore
           id: user.UUID,
           type: "Refresh",
           attributes: {
-            // @ts-ignore
             email: user.email,
+            created: user.created_at,
+            updated: user.updated_at,
             access_token: accessToken.token,
             access_token_expiry: accessToken.expiration,
           },

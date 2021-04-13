@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { Status } from "../deps.ts";
 import { makeRecoverytoken } from "../helpers/jwtutils.ts";
 import { db } from "../db/db.ts";
@@ -43,10 +44,11 @@ export const forgotPassword = async (ctx: any) => {
     superstruct.assert(bodyValue, recoverySchema);
 
     const { email } = bodyValue;
-    const userObj = await db.queryArray(
-      "SELECT * FROM users WHERE email = $1;",
-      email,
-    );
+    const userObj = await db.queryObject({
+      text: `SELECT email FROM users WHERE email = $1;`,
+      args: [email],
+      fields: ["email"]
+    });
 
     const user = userObj.rows[0];
 
@@ -60,14 +62,13 @@ export const forgotPassword = async (ctx: any) => {
 
       await client.send({
         from: FROMADDRESS ?? "no-reply@example.com",
-        // @ts-ignore
         to: user.email,
         subject: "Account Recovery",
         content: `Hello 👋 </br>
           You are receiving this email because you have attempted to recover your account</br>
           Please use the following link to login again: <a href="${RECOVERYURL}?token=${recoveryToken.token}">Click Here</a>`,
       });
-      await client.close();
+      await db.release();
 
       ctx.response.status = Status.OK;
       ctx.response.body = {
@@ -87,9 +88,8 @@ export const forgotPassword = async (ctx: any) => {
             "An email containing a recovery link has been sent to the email address provided.",
         },
       };
+      await db.release();
     }
-
-    await db.release();
   } catch (err) {
     log.error(err);
     ctx.response.status = err.status | 400;

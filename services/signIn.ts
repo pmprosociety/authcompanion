@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { Status } from "../deps.ts";
 import { compare } from "../deps.ts";
 import { makeAccesstoken, makeRefreshtoken } from "../helpers/jwtutils.ts";
@@ -28,18 +29,20 @@ export const signIn = async (ctx: any) => {
     superstruct.assert(bodyValue, loginSchema);
 
     const { email, password } = bodyValue;
-    const result = await db.queryObject(
-      "SELECT * FROM users WHERE email = $1;",
-      email,
-    );
 
-    if (result.rowCount == 0) {
+    const userObj = await db.queryObject({
+      text: `SELECT name, email, password, "UUID", active, refresh_token, created_at, updated_at FROM users WHERE email = $1;`,
+      args: [email],
+      fields: ["name", "email", "password", "UUID", "active", "refresh_token", "created_at", "updated_at"]
+    });
+
+    if (userObj.rowCount == 0) {
       ctx.throw(Status.Forbidden, "Bad Request, Please Retry Login");
       await db.release();
     }
 
-    const user = result.rows[0];
-
+    const user = userObj.rows[0];    
+    
     if (!user.active) {
       ctx.throw(
         Status.Forbidden,
@@ -47,10 +50,9 @@ export const signIn = async (ctx: any) => {
       );
       await db.release();
     }
-    // @ts-ignore
     if (await compare(password, user.password)) {
-      const accessToken = await makeAccesstoken(result);
-      const refreshToken = await makeRefreshtoken(result);
+      const accessToken = await makeAccesstoken(userObj);
+      const refreshToken = await makeRefreshtoken(userObj);
       const date = new Date();
       date.setTime(date.getTime() + (7 * 24 * 60 * 60 * 1000)) // TODO: Make configurable now, set to 7 days
       ;
@@ -66,11 +68,13 @@ export const signIn = async (ctx: any) => {
 
       ctx.response.body = {
         data: {
-          id: user.UUID,
+          id: user.uuid,
           type: "Login",
           attributes: {
             name: user.name,
             email: user.email,
+            created: user.created_at,
+            updated: user.updated_at,
             access_token: accessToken.token,
             access_token_expiry: accessToken.expiration,
           },

@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { Status } from "../deps.ts";
 import {
   makeAccesstoken,
@@ -35,10 +36,13 @@ export const recoverToken = async (ctx: any) => {
     //if the request has a valid recovery token, issue new access token
     let validatedtoken = await validateJWT(token);
 
-    const userObj = await db.queryArray(
-      "SELECT * FROM users WHERE email = $1;",
-      validatedtoken.payload.email,
-    );
+    const userObj = await db.queryObject({
+      text: `SELECT name, email, password, "UUID", active, refresh_token, created_at, updated_at FROM users WHERE email = $1;`,
+      args: [validatedtoken.payload.email],
+      fields: ["name", "email", "password", "UUID", "active", "refresh_token", "created_at", "updated_at"]
+    });
+
+    const user = userObj.rows[0];    
 
     const accessToken = await makeAccesstoken(userObj);
     const refreshToken = await makeRefreshtoken(userObj);
@@ -53,8 +57,8 @@ export const recoverToken = async (ctx: any) => {
         id: validatedtoken.payload.id,
         type: "Recovery Login",
         attributes: {
-          name: validatedtoken.payload.name,
-          email: validatedtoken.payload.email,
+          name: user.name,
+          email: user.email,
           access_token: accessToken.token,
           access_token_expiry: accessToken.expiration,
         },

@@ -1,13 +1,15 @@
+// @ts-nocheck
 import { Status } from "../deps.ts";
 import { db } from "../db/db.ts";
 import log from "../helpers/log.ts";
 
 export const logoutUser = async (ctx: any) => {
   try {
-    const userObj = await db.queryObject(
-      `SELECT * FROM "users" WHERE "UUID" = $1;`,
-      ctx.state.JWTclaims.id,
-    );
+    const userObj = await db.queryObject({
+      text: `SELECT email FROM users WHERE "UUID" = $1;`,
+      args: [ctx.state.JWTclaims.id],
+      fields: ["email"]
+    });
 
     if (userObj.rowCount == 0) {
       log.warning("Unable to find user to logout");
@@ -18,23 +20,21 @@ export const logoutUser = async (ctx: any) => {
       await db.release();
     }
 
-    const result = await db.queryArray(
-      `Update "users" SET "refresh_token" = '' WHERE "UUID" = $1 RETURNING *;`,
-      ctx.state.JWTclaims.id,
-    );
+    const result = await db.queryObject({
+      text: `Update "users" SET "refresh_token" = '' WHERE "UUID" = $1 RETURNING name, email, "UUID";`,
+      args: [ctx.state.JWTclaims.id],
+      fields: ["name", "email", "UUID" ]
+    });
 
     const user = result.rows[0];
 
     ctx.response.status = Status.OK;
     ctx.response.body = {
       data: {
-        // @ts-ignore
         id: user.UUID,
         type: "Logout User",
         attributes: {
-          // @ts-ignore
           name: user.name,
-          // @ts-ignore
           email: user.email,
         },
       },

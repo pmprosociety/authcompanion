@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { Status } from "../deps.ts";
 import { hash } from "../deps.ts";
 import { v4 } from "../deps.ts";
@@ -33,11 +34,12 @@ export const signUp = async (ctx: any) => {
 
     const { name, email, password } = bodyValue;
 
-    const userAlreadyExists = await db.queryObject(
-      "SELECT * FROM users WHERE email = $1;",
-      email,
-    );
-
+    const userAlreadyExists = await db.queryObject({
+      text: "SELECT email FROM users WHERE email = $1;",
+      args: [email],
+      fields: ["email"]
+    });
+    
     if (userAlreadyExists.rowCount !== 0) {
       log.warning("User already exists");
       await db.release();
@@ -50,18 +52,16 @@ export const signUp = async (ctx: any) => {
     const hashpassword = await hash(password);
     const jtiClaim = v4.generate();
 
-    const result = await db.queryArray(
-      "INSERT INTO users (name, email, password, active, refresh_token) VALUES ($1, $2, $3, '1', $4) RETURNING *;",
-      name,
-      email,
-      hashpassword,
-      jtiClaim,
-    );
+    const userObj = await db.queryObject({
+      text: `INSERT INTO users (name, email, password, active, refresh_token) VALUES ($1, $2, $3, '1', $4) RETURNING name, email, "UUID", refresh_token, created_at, updated_at;`,
+      args: [name, email, hashpassword, jtiClaim],
+      fields: ["name", "email", "UUID", "refresh_token", "created_at", "updated_at"]
+    });
 
-    const user = result.rows[0];
+    let user = userObj.rows[0]    
 
-    const accessToken = await makeAccesstoken(result);
-    const refreshToken = await makeRefreshtoken(result);
+    const accessToken = await makeAccesstoken(userObj);
+    const refreshToken = await makeRefreshtoken(userObj);
 
     ctx.response.status = Status.Created;
     ctx.cookies.set("refreshToken", refreshToken, {
@@ -70,21 +70,18 @@ export const signUp = async (ctx: any) => {
     });
     ctx.response.body = {
       data: {
-        // @ts-ignore
-        id: user.UUID,
+        id: user.uuid,
         type: "Register",
         attributes: {
-          // @ts-ignore
           name: user.name,
-          // @ts-ignore
           email: user.email,
-          // @ts-ignore
-          created_at: user.created_at,
+          created: user.created_at,
           access_token: accessToken.token,
           access_token_expiry: accessToken.expiration,
         },
       },
     };
+    await db.release();
   } catch (err) {
     log.error(err);
 
@@ -97,6 +94,5 @@ export const signUp = async (ctx: any) => {
       }],
     };
   } finally {
-    await db.release();
   }
 };

@@ -11,7 +11,11 @@ app.addEventListener("listen", ({ secure, hostname, port }) => {
   const protocol = secure ? "https://" : "http://";
   log.debug(`HTTPS is ${secure ? "on" : "off"}`);
   const url = `${protocol}${hostname ?? "localhost"}:${port}`;
-  log.info(`🚀 Ready on ${url}`);
+  log.info(`
+  ################################################
+  🚀  Server listening on: ${url} 
+  ################################################
+  `);
   log.info("Use CTRL-C to shutdown AuthCompanion");
 });
 
