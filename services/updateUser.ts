@@ -36,9 +36,9 @@ export const updateUser = async (ctx: any) => {
     const userObj = await db.queryObject({
       text: 'SELECT email FROM users WHERE "UUID" = $1;',
       args: [ctx.state.JWTclaims.id],
-      fields: ["email"]
+      fields: ["email"],
     });
-    
+
     if (userObj.rowCount == 0) {
       log.warning("Unable to find user to update");
       await db.release();
@@ -53,10 +53,11 @@ export const updateUser = async (ctx: any) => {
       const jtiClaim = v4.generate();
 
       const userObj1 = await db.queryObject({
-          text: `Update "users" SET name = $1, email = $2, password = $3, refresh_token = $4 WHERE "UUID" = $5 RETURNING name, email, "UUID", created_at, updated_at;`,
-          args: [name, email, hashpassword, jtiClaim, ctx.state.JWTclaims.id],
-          fields: ["name", "email", "UUID", "created_at", "updated_at"]
-        });
+        text:
+          `Update "users" SET name = $1, email = $2, password = $3, refresh_token = $4 WHERE "UUID" = $5 RETURNING name, email, "UUID", created_at, updated_at;`,
+        args: [name, email, hashpassword, jtiClaim, ctx.state.JWTclaims.id],
+        fields: ["name", "email", "UUID", "created_at", "updated_at"],
+      });
 
       const user = userObj1.rows[0];
 
@@ -86,13 +87,14 @@ export const updateUser = async (ctx: any) => {
     } else {
       // If the user does not provide a password, just update the user's name and email
       const userObj2 = await db.queryObject({
-          text: `UPDATE "users" SET name = $1, email = $2 WHERE "UUID" = $3 RETURNING name, email, "UUID", created_at, updated_at;`,
-          args: [name, email, ctx.state.JWTclaims.id],
-          fields: ["name", "email", "UUID", "created_at", "updated_at"]
-        });
+        text:
+          `UPDATE "users" SET name = $1, email = $2 WHERE "UUID" = $3 RETURNING name, email, "UUID", created_at, updated_at;`,
+        args: [name, email, ctx.state.JWTclaims.id],
+        fields: ["name", "email", "UUID", "created_at", "updated_at"],
+      });
 
       const user = userObj2.rows[0];
-      
+
       const accessToken = await makeAccesstoken(userObj2);
       const refreshToken = await makeRefreshtoken(userObj2);
 

@@ -37,12 +37,22 @@ export const recoverToken = async (ctx: any) => {
     let validatedtoken = await validateJWT(token);
 
     const userObj = await db.queryObject({
-      text: `SELECT name, email, password, "UUID", active, refresh_token, created_at, updated_at FROM users WHERE email = $1;`,
+      text:
+        `SELECT name, email, password, "UUID", active, refresh_token, created_at, updated_at FROM users WHERE email = $1;`,
       args: [validatedtoken.payload.email],
-      fields: ["name", "email", "password", "UUID", "active", "refresh_token", "created_at", "updated_at"]
+      fields: [
+        "name",
+        "email",
+        "password",
+        "UUID",
+        "active",
+        "refresh_token",
+        "created_at",
+        "updated_at",
+      ],
     });
 
-    const user = userObj.rows[0];    
+    const user = userObj.rows[0];
 
     const accessToken = await makeAccesstoken(userObj);
     const refreshToken = await makeRefreshtoken(userObj);

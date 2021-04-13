@@ -47,7 +47,7 @@ export const forgotPassword = async (ctx: any) => {
     const userObj = await db.queryObject({
       text: `SELECT email FROM users WHERE email = $1;`,
       args: [email],
-      fields: ["email"]
+      fields: ["email"],
     });
 
     const user = userObj.rows[0];

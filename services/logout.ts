@@ -8,7 +8,7 @@ export const logoutUser = async (ctx: any) => {
     const userObj = await db.queryObject({
       text: `SELECT email FROM users WHERE "UUID" = $1;`,
       args: [ctx.state.JWTclaims.id],
-      fields: ["email"]
+      fields: ["email"],
     });
 
     if (userObj.rowCount == 0) {
@@ -21,9 +21,10 @@ export const logoutUser = async (ctx: any) => {
     }
 
     const result = await db.queryObject({
-      text: `Update "users" SET "refresh_token" = '' WHERE "UUID" = $1 RETURNING name, email, "UUID";`,
+      text:
+        `Update "users" SET "refresh_token" = '' WHERE "UUID" = $1 RETURNING name, email, "UUID";`,
       args: [ctx.state.JWTclaims.id],
-      fields: ["name", "email", "UUID" ]
+      fields: ["name", "email", "UUID"],
     });
 
     const user = result.rows[0];

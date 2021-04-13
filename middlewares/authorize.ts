@@ -19,7 +19,7 @@ export default async (ctx: any, next: any) => {
     }
 
     let { payload } = await validateJWT(userJWT);
-    
+
     ctx.state.JWTclaims = payload;
 
     await next();

@@ -16,15 +16,24 @@ export const refresh = async (ctx: any) => {
       ctx.throw(Status.BadRequest, "No Refresh Token Found");
     }
 
-    let validatedjwt = await validateRefreshToken(refreshToken);    
+    let validatedjwt = await validateRefreshToken(refreshToken);
 
     if (validatedjwt) {
       const userObj = await db.queryObject({
-        text: `SELECT name, email, "UUID", refresh_token, active, created_at, updated_at FROM users WHERE refresh_token = $1;`,
+        text:
+          `SELECT name, email, "UUID", refresh_token, active, created_at, updated_at FROM users WHERE refresh_token = $1;`,
         args: [validatedjwt?.payload.jti],
-        fields: ["name", "email", "UUID", "refresh_token", "active", "created_at", "updated_at"]
+        fields: [
+          "name",
+          "email",
+          "UUID",
+          "refresh_token",
+          "active",
+          "created_at",
+          "updated_at",
+        ],
       });
-      
+
       if (userObj.rowCount == 0) {
         ctx.throw(Status.BadRequest, "Invalid Refresh Token");
         await db.release();

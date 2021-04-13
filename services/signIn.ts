@@ -31,9 +31,19 @@ export const signIn = async (ctx: any) => {
     const { email, password } = bodyValue;
 
     const userObj = await db.queryObject({
-      text: `SELECT name, email, password, "UUID", active, refresh_token, created_at, updated_at FROM users WHERE email = $1;`,
+      text:
+        `SELECT name, email, password, "UUID", active, refresh_token, created_at, updated_at FROM users WHERE email = $1;`,
       args: [email],
-      fields: ["name", "email", "password", "UUID", "active", "refresh_token", "created_at", "updated_at"]
+      fields: [
+        "name",
+        "email",
+        "password",
+        "UUID",
+        "active",
+        "refresh_token",
+        "created_at",
+        "updated_at",
+      ],
     });
 
     if (userObj.rowCount == 0) {
@@ -41,8 +51,8 @@ export const signIn = async (ctx: any) => {
       await db.release();
     }
 
-    const user = userObj.rows[0];    
-    
+    const user = userObj.rows[0];
+
     if (!user.active) {
       ctx.throw(
         Status.Forbidden,

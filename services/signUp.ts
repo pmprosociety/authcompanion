@@ -37,9 +37,9 @@ export const signUp = async (ctx: any) => {
     const userAlreadyExists = await db.queryObject({
       text: "SELECT email FROM users WHERE email = $1;",
       args: [email],
-      fields: ["email"]
+      fields: ["email"],
     });
-    
+
     if (userAlreadyExists.rowCount !== 0) {
       log.warning("User already exists");
       await db.release();
@@ -53,12 +53,20 @@ export const signUp = async (ctx: any) => {
     const jtiClaim = v4.generate();
 
     const userObj = await db.queryObject({
-      text: `INSERT INTO users (name, email, password, active, refresh_token) VALUES ($1, $2, $3, '1', $4) RETURNING name, email, "UUID", refresh_token, created_at, updated_at;`,
+      text:
+        `INSERT INTO users (name, email, password, active, refresh_token) VALUES ($1, $2, $3, '1', $4) RETURNING name, email, "UUID", refresh_token, created_at, updated_at;`,
       args: [name, email, hashpassword, jtiClaim],
-      fields: ["name", "email", "UUID", "refresh_token", "created_at", "updated_at"]
+      fields: [
+        "name",
+        "email",
+        "UUID",
+        "refresh_token",
+        "created_at",
+        "updated_at",
+      ],
     });
 
-    let user = userObj.rows[0]    
+    let user = userObj.rows[0];
 
     const accessToken = await makeAccesstoken(userObj);
     const refreshToken = await makeRefreshtoken(userObj);
