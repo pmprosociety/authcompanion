@@ -36,7 +36,7 @@ export const updateUser = async (ctx: any) => {
     const userObj = await db.queryObject({
       text: 'SELECT email FROM users WHERE "UUID" = $1;',
       args: [ctx.state.JWTclaims.id],
-      fields: ["email"],
+      fields: ["UUID"],
     });
 
     if (userObj.rowCount == 0) {

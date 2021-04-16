@@ -68,7 +68,8 @@ export const forgotPassword = async (ctx: any) => {
           You are receiving this email because you have attempted to recover your account</br>
           Please use the following link to login again: <a href="${RECOVERYURL}?token=${recoveryToken.token}">Click Here</a>`,
       });
-      await db.release();
+
+      await client.close();
 
       ctx.response.status = Status.OK;
       ctx.response.body = {
@@ -88,8 +89,9 @@ export const forgotPassword = async (ctx: any) => {
             "An email containing a recovery link has been sent to the email address provided.",
         },
       };
-      await db.release();
     }
+    await db.release();
+
   } catch (err) {
     log.error(err);
     ctx.response.status = err.status | 400;
