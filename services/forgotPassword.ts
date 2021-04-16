@@ -91,7 +91,6 @@ export const forgotPassword = async (ctx: any) => {
       };
     }
     await db.release();
-
   } catch (err) {
     log.error(err);
     ctx.response.status = err.status | 400;

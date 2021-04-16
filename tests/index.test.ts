@@ -231,7 +231,7 @@ Deno.test("API Endpoint Test: /auth/recovery/token", async () => {
     "test_pass@authcompanion.com",
   );
 
-  const recoveryToken = await makeRecoverytoken(result);  
+  const recoveryToken = await makeRecoverytoken(result);
 
   const ctx = new Context(
     app,

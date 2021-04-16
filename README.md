@@ -5,7 +5,8 @@
 
 <h2 align="center">AuthCompanion</h2>
 
-<p align="center"> An effortless, open source, identity and user management server
+<p align="center"> An effortless, open source, token-based user management server - well suited for
+microservices and static website projects.
 </p>
 
 <div align="center">
@@ -29,14 +30,6 @@
 </div>
 
 ---
-
-<div align="center">
-
-AuthCompanion is a Token-based Authentication server well suited for
-microservices architectures and static websites. The user authenticates using
-valid credentials and the server returns a signed token.
-
-</div>
 
 ## Getting Started
 
@@ -92,12 +85,15 @@ that can help get you started.
 
 AuthCompanion will help you build web application FASTER.
 
-The default configuration strives to be secure, sane and reliable for
-production. We ensure that AuthCompanion can start-up quickly and run smoothly
-in any environment... without having to study docs for hours.
+The default configuration strives to be reasonable, sane and reliable for
+gettings started easily - extra care should be taken/hardening for production
+environemnts.
 
-Think of this server as a base template for getting your new applications
-started with user management.
+Think of this server as a base JavaScript template for getting your new
+applications running with user management.
+
+We ensure that AuthCompanion can start-up quickly and run smoothly... without
+having to study the docs for hours.
 
 ## Demo
 
