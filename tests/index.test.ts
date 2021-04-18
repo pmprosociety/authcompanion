@@ -201,29 +201,29 @@ Deno.test("API Endpoint Test: /auth/users/me", async () => {
   );
 });
 
-// Deno.test("API Endpoint Test: /auth/recovery", async () => {
-//   const requestBody = {
-//     "email": "test_pass@authcompanion.com",
-//   };
+Deno.test("API Endpoint Test: /auth/recovery", async () => {
+  const requestBody = {
+    "email": "test_pass@authcompanion.com",
+  };
 
-//   const serverRequest = createMockServerRequest({
-//     headerValues: { "content-type": "application/json" },
-//     body: JSON.stringify(requestBody),
-//   });
+  const serverRequest = createMockServerRequest({
+    headerValues: { "content-type": "application/json" },
+    body: JSON.stringify(requestBody),
+  });
 
-//   const ctx = new Context(
-//     app,
-//     serverRequest,
-//   );
+  const ctx = new Context(
+    app,
+    serverRequest,
+  );
 
-//   await forgotPassword(ctx);
+  await forgotPassword(ctx);
 
-//   assertEquals(
-//     ctx.response.status,
-//     200,
-//     "The API did not return a successful response; check server logs",
-//   );
-// });
+  assertEquals(
+    ctx.response.status,
+    200,
+    "The API did not return a successful response; check server logs",
+  );
+});
 
 Deno.test("API Endpoint Test: /auth/recovery/token", async () => {
   const result = await db.queryObject(
