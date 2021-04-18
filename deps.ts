@@ -3,7 +3,7 @@ export {
   isHttpError,
   Router,
   Status,
-} from "https://deno.land/x/oak@v6.5.0/mod.ts";
+} from "https://deno.land/x/oak@v7.2.0/mod.ts";
 export { Client, Pool } from "https://deno.land/x/postgres@v0.11.0/mod.ts";
 export { compare, hash } from "https://deno.land/x/bcrypt@v0.2.4/mod.ts";
 export {
