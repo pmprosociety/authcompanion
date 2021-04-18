@@ -24,7 +24,7 @@ microservices and static website projects.
      <img alt="GitHub license" src="https://img.shields.io/github/license/pmprosociety/authcompanion" />
    </a>
    <a href="https://deno.land">
-     <img src="https://img.shields.io/badge/deno-1.8.0-green?logo=deno"/>
+     <img src="https://img.shields.io/badge/deno-1.9.0-green?logo=deno"/>
    </a>
 
 </div>
@@ -50,10 +50,7 @@ you know... keep it if you're just trying things out)
 cp env.example .env
 ```
 
-Ensure Docker is installed - link if you need it:
-https://docs.docker.com/get-docker/
-
-Spin up AuthCompanion by running this docker command:
+Spin up the AuthCompanion stack by running this docker compose command:
 
 ```sh
 docker-compose up
@@ -83,16 +80,13 @@ that can help get you started.
 
 ## Who is this for?
 
-AuthCompanion will help you build web application FASTER.
+AuthCompanion is a JavaScript server which helps you build web application **faster**.
 
 The default configuration strives to be reasonable, sane and reliable for
-gettings started easily - extra care should be taken/hardening for production
-environemnts.
+gettings started easily - extra hardening should be done when moving to production
+environments.
 
-Think of this server as a base JavaScript template for getting your new
-applications running with user management.
-
-We ensure that AuthCompanion can start-up quickly and run smoothly... without
+We ensure that AuthCompanion can be useful right away and run smoothly... without
 having to study the docs for hours.
 
 ## Demo
