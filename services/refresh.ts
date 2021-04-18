@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { Status } from "../deps.ts";
 import {
   makeAccesstoken,
@@ -18,38 +19,50 @@ export const refresh = async (ctx: any) => {
     let validatedjwt = await validateRefreshToken(refreshToken);
 
     if (validatedjwt) {
-      const result = await db.query(
-        "SELECT * FROM users WHERE refresh_token = $1;",
-        validatedjwt?.payload.jti,
-      );
+      const userObj = await db.queryObject({
+        text:
+          `SELECT name, email, "UUID", refresh_token, active, created_at, updated_at FROM users WHERE refresh_token = $1;`,
+        args: [validatedjwt?.payload.jti],
+        fields: [
+          "name",
+          "email",
+          "UUID",
+          "refresh_token",
+          "active",
+          "created_at",
+          "updated_at",
+        ],
+      });
 
-      if (result.rowCount == 0) {
+      if (userObj.rowCount == 0) {
         ctx.throw(Status.BadRequest, "Invalid Refresh Token");
         await db.release();
       }
 
-      const objectRows = result.rowsOfObjects();
-      const user = objectRows[0];
+      const user = userObj.rows[0];
 
       if (!user.active) {
         ctx.throw(Status.Forbidden, "User has been disabled");
         await db.release();
       }
 
-      const accessToken = await makeAccesstoken(result);
-      const newRefreshToken = await makeRefreshtoken(result);
+      const accessToken = await makeAccesstoken(userObj);
+      const newRefreshToken = await makeRefreshtoken(userObj);
 
       ctx.response.status = Status.OK;
       ctx.cookies.set("refreshToken", newRefreshToken, {
         httpOnly: true,
         expires: new Date("2022-01-01T00:00:00+00:00"),
       });
+
       ctx.response.body = {
         data: {
           id: user.UUID,
           type: "Refresh",
           attributes: {
             email: user.email,
+            created: user.created_at,
+            updated: user.updated_at,
             access_token: accessToken.token,
             access_token_expiry: accessToken.expiration,
           },

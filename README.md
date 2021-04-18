@@ -5,7 +5,8 @@
 
 <h2 align="center">AuthCompanion</h2>
 
-<p align="center"> An effortless, open source, identity and user management server
+<p align="center"> An effortless, open source, token-based user management server - well suited for
+microservices and static website projects.
 </p>
 
 <div align="center">
@@ -23,20 +24,12 @@
      <img alt="GitHub license" src="https://img.shields.io/github/license/pmprosociety/authcompanion" />
    </a>
    <a href="https://deno.land">
-     <img src="https://img.shields.io/badge/deno-1.7.0-green?logo=deno"/>
+     <img src="https://img.shields.io/badge/deno-1.9.0-green?logo=deno"/>
    </a>
 
 </div>
 
 ---
-
-<div align="center">
-
-AuthCompanion is a Token-based Authentication server well suited for
-microservices architectures and static websites. The user authenticates using
-valid credentials and the server returns a signed token.
-
-</div>
 
 ## Getting Started
 
@@ -57,10 +50,7 @@ you know... keep it if you're just trying things out)
 cp env.example .env
 ```
 
-Ensure Docker is installed - link if you need it:
-https://docs.docker.com/get-docker/
-
-Spin up AuthCompanion by running this docker command:
+Spin up the AuthCompanion stack by running this docker compose command:
 
 ```sh
 docker-compose up
@@ -90,18 +80,19 @@ that can help get you started.
 
 ## Who is this for?
 
-AuthCompanion will help you build web application FASTER.
+AuthCompanion is a JavaScript server which helps you build web application **faster**.
 
-The default configuration strives to be secure, sane and reliable for
-production. We ensure that AuthCompanion can start-up quickly and run smoothly
-in any environment... without having to study docs for hours.
+The default configuration strives to be reasonable, sane and reliable for
+gettings started easily - extra hardening should be done when moving to production
+environments.
 
-Think of this server as a base template for getting your new applications
-started with user management.
+We ensure that AuthCompanion can be useful right away and run smoothly... without
+having to study the docs for hours.
 
 ## Demo
 
-The vue starter app is an example UI to help guide you in implementing AuthCompanion's APIs: https://github.com/pmprosociety/authcompanion-vue-starter
+The vue starter app is an example UI to help guide you in implementing
+AuthCompanion's APIs: https://github.com/pmprosociety/authcompanion-vue-starter
 
 (uses Vue 3 + Vite + Tailwind CSS)
 

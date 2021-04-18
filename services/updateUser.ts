@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { Status } from "../deps.ts";
 import { hash } from "../deps.ts";
 import { v4 } from "../deps.ts";
@@ -32,13 +33,15 @@ export const updateUser = async (ctx: any) => {
 
     const { name, email, password } = bodyValue;
 
-    const userObj = await db.query(
-      `SELECT * FROM "users" WHERE "UUID" = $1;`,
-      ctx.state.JWTclaims.id,
-    );
+    const userObj = await db.queryObject({
+      text: 'SELECT email FROM users WHERE "UUID" = $1;',
+      args: [ctx.state.JWTclaims.id],
+      fields: ["UUID"],
+    });
 
     if (userObj.rowCount == 0) {
       log.warning("Unable to find user to update");
+      await db.release();
       ctx.throw(
         Status.BadRequest,
         "Unable to process request, please try again",
@@ -49,20 +52,17 @@ export const updateUser = async (ctx: any) => {
       const hashpassword = await hash(password);
       const jtiClaim = v4.generate();
 
-      const result = await db.query(
-        `Update "users" SET name = $1, email = $2, password = $3, refresh_token = $4 WHERE "UUID" = $5 RETURNING *;`,
-        name,
-        email,
-        hashpassword,
-        jtiClaim,
-        ctx.state.JWTclaims.id,
-      );
+      const userObj1 = await db.queryObject({
+        text:
+          `Update "users" SET name = $1, email = $2, password = $3, refresh_token = $4 WHERE "UUID" = $5 RETURNING name, email, "UUID", created_at, updated_at;`,
+        args: [name, email, hashpassword, jtiClaim, ctx.state.JWTclaims.id],
+        fields: ["name", "email", "UUID", "created_at", "updated_at"],
+      });
 
-      const objectRows = result.rowsOfObjects();
-      const user = objectRows[0];
+      const user = userObj1.rows[0];
 
-      const accessToken = await makeAccesstoken(result);
-      const refreshToken = await makeRefreshtoken(result);
+      const accessToken = await makeAccesstoken(userObj1);
+      const refreshToken = await makeRefreshtoken(userObj1);
 
       ctx.response.status = Status.OK;
       ctx.cookies.set("refreshToken", refreshToken, {
@@ -71,12 +71,13 @@ export const updateUser = async (ctx: any) => {
       });
       ctx.response.body = {
         data: {
-          id: user.UUID,
+          id: user.uuid,
           type: "Updated User",
           attributes: {
             name: user.name,
             email: user.email,
-            updated_at: user.updated_at,
+            created: user.created_at,
+            updated: user.updated_at,
             access_token: accessToken.token,
             access_token_expiry: accessToken.expiration,
           },
@@ -84,18 +85,18 @@ export const updateUser = async (ctx: any) => {
       };
       await db.release();
     } else {
-      const result = await db.query(
-        `UPDATE "users" SET name = $1, email = $2 WHERE "UUID" = $3 RETURNING *;`,
-        name,
-        email,
-        ctx.state.JWTclaims.id,
-      );
+      // If the user does not provide a password, just update the user's name and email
+      const userObj2 = await db.queryObject({
+        text:
+          `UPDATE "users" SET name = $1, email = $2 WHERE "UUID" = $3 RETURNING name, email, "UUID", created_at, updated_at;`,
+        args: [name, email, ctx.state.JWTclaims.id],
+        fields: ["name", "email", "UUID", "created_at", "updated_at"],
+      });
 
-      const objectRows = result.rowsOfObjects();
-      const user = objectRows[0];
+      const user = userObj2.rows[0];
 
-      const accessToken = await makeAccesstoken(result);
-      const refreshToken = await makeRefreshtoken(result);
+      const accessToken = await makeAccesstoken(userObj2);
+      const refreshToken = await makeRefreshtoken(userObj2);
 
       ctx.response.status = Status.OK;
       ctx.cookies.set("refreshToken", refreshToken, {
@@ -105,12 +106,13 @@ export const updateUser = async (ctx: any) => {
       ctx.response.status = Status.OK;
       ctx.response.body = {
         data: {
-          id: user.UUID,
+          id: user.uuid,
           type: "Updated User",
           attributes: {
             name: user.name,
             email: user.email,
-            updated_at: user.updated_at,
+            created: user.created_at,
+            updated: user.updated_at,
             access_token: accessToken.token,
             access_token_expiry: accessToken.expiration,
           },
