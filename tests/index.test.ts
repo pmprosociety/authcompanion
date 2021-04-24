@@ -9,13 +9,13 @@ import {
   makeRefreshtoken,
   validateJWT,
 } from "../helpers/jwtutils.ts";
-import { signUp } from "../services/signUp.ts";
-import { signIn } from "../services/signIn.ts";
+import { registration } from "../services/registration.ts";
+import { login } from "../services/login.ts";
 import { refresh } from "../services/refresh.ts";
-import { updateUser } from "../services/updateUser.ts";
+import { userSettings } from "../services/userSettings.ts";
 import { recoverToken } from "../services/recoverytoken.ts";
-import { logoutUser } from "../services/logout.ts";
-import { forgotPassword } from "../services/forgotPassword.ts";
+import { logout } from "../services/logout.ts";
+import { accountRecovery } from "../services/accountRecovery.ts";
 import authorize from "../middlewares/authorize.ts";
 
 const encoder = new TextEncoder();
@@ -89,7 +89,7 @@ Deno.test("API Endpoint Test: /auth/register", async () => {
     serverRequest,
   );
 
-  await signUp(ctx);
+  await registration(ctx);
 
   assertEquals(
     ctx.response.status,
@@ -114,7 +114,7 @@ Deno.test("API Endpoint Test: /auth/login", async () => {
     serverRequest,
   );
 
-  await signIn(ctx);
+  await login(ctx);
 
   assertEquals(
     ctx.response.status,
@@ -192,7 +192,7 @@ Deno.test("API Endpoint Test: /auth/users/me", async () => {
 
   ctx.state.JWTclaims = payload;
 
-  await updateUser(ctx);
+  await userSettings(ctx);
 
   assertEquals(
     ctx.response.status,
@@ -216,7 +216,7 @@ Deno.test("API Endpoint Test: /auth/users/me", async () => {
 //     serverRequest,
 //   );
 
-//   await forgotPassword(ctx);
+//   await accountRecovery(ctx);
 
 //   assertEquals(
 //     ctx.response.status,
@@ -291,7 +291,7 @@ Deno.test("API Endpoint Test: /auth/logout", async () => {
 
   ctx.state.JWTclaims = payload;
 
-  await logoutUser(ctx);
+  await logout(ctx);
 
   // Clean out the test data from the DB (helpful when running tests locally)
   await cleanTestData();

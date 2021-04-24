@@ -7,7 +7,7 @@ import { db } from "../db/db.ts";
 import log from "../helpers/log.ts";
 import { superstruct } from "../deps.ts";
 
-export const updateUser = async (ctx: any) => {
+export const userSettings = async (ctx: any) => {
   try {
     if (!ctx.request.hasBody) {
       log.debug("Request has no body");

@@ -21,7 +21,7 @@ const connectConfig: any = {
   password: SMTPPASSWORD,
 };
 
-export const forgotPassword = async (ctx: any) => {
+export const accountRecovery = async (ctx: any) => {
   try {
     if (!ctx.request.hasBody) {
       log.debug("Request has no body");
