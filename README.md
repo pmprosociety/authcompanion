@@ -79,14 +79,15 @@ that can help get you started.
 
 ## Who is this for?
 
-AuthCompanion is a JavaScript server which helps you build web application **faster**.
+AuthCompanion is a JavaScript server which helps you build web application
+**faster**.
 
 The default configuration strives to be reasonable, sane and reliable for
-gettings started easily - extra hardening should be done when moving to production
-environments.
+gettings started easily - extra hardening should be done when moving to
+production environments.
 
-We ensure that AuthCompanion can be useful right away and run smoothly... without
-having to study the docs for hours.
+We ensure that AuthCompanion can be useful right away and run smoothly...
+without having to study the docs for hours.
 
 ## Demo
 
