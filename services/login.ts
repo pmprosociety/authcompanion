@@ -7,7 +7,7 @@ import log from "../helpers/log.ts";
 import { superstruct } from "../deps.ts";
 import { SECURE } from "../config.ts";
 
-export const signIn = async (ctx: any) => {
+export const login = async (ctx: any) => {
   try {
     if (!ctx.request.hasBody) {
       ctx.throw(Status.BadRequest, "Bad Request, No Request Body");

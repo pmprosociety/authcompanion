@@ -3,7 +3,7 @@ import { Status } from "../deps.ts";
 import { db } from "../db/db.ts";
 import log from "../helpers/log.ts";
 
-export const logoutUser = async (ctx: any) => {
+export const logout = async (ctx: any) => {
   try {
     const userObj = await db.queryObject({
       text: `SELECT email FROM users WHERE "UUID" = $1;`,

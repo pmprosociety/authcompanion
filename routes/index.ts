@@ -1,11 +1,11 @@
 import { Router } from "../deps.ts";
-import { signIn } from "../services/signIn.ts";
+import { login } from "../services/login.ts";
 import { refresh } from "../services/refresh.ts";
-import { signUp } from "../services/signUp.ts";
-import { updateUser } from "../services/updateUser.ts";
-import { forgotPassword } from "../services/forgotPassword.ts";
+import { registration } from "../services/registration.ts";
+import { userSettings } from "../services/userSettings.ts";
+import { accountRecovery } from "../services/accountRecovery.ts";
 import { recoverToken } from "../services/recoverytoken.ts";
-import { logoutUser } from "../services/logout.ts";
+import { logout } from "../services/logout.ts";
 
 import authorize from "../middlewares/authorize.ts";
 
@@ -16,12 +16,12 @@ const router = new Router({ prefix: pathPrefix });
 
 //API Server Routes
 router
-  .post("auth/register", signUp)
-  .post("auth/login", signIn)
+  .post("auth/register", registration)
+  .post("auth/login", login)
   .post("auth/refresh", refresh)
-  .post("auth/recovery", forgotPassword)
+  .post("auth/recovery", accountRecovery)
   .post("auth/recovery/token", recoverToken)
-  .post("auth/users/me", authorize, updateUser)
-  .get("auth/logout", authorize, logoutUser);
+  .post("auth/users/me", authorize, userSettings)
+  .get("auth/logout", authorize, logout);
 
 export default router;

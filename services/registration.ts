@@ -7,8 +7,7 @@ import { db } from "../db/db.ts";
 import log from "../helpers/log.ts";
 import { superstruct } from "../deps.ts";
 
-// api/v1/auth/register
-export const signUp = async (ctx: any) => {
+export const registration = async (ctx: any) => {
   try {
     if (!ctx.request.hasBody) {
       log.warning("No body");
