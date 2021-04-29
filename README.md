@@ -24,7 +24,7 @@ microservices and static website projects.
      <img alt="GitHub license" src="https://img.shields.io/github/license/pmprosociety/authcompanion" />
    </a>
    <a href="https://deno.land">
-     <img src="https://img.shields.io/badge/deno-1.9.1-green?logo=deno"/>
+     <img src="https://img.shields.io/badge/deno-1.9.2-green?logo=deno"/>
    </a>
 
 </div>
