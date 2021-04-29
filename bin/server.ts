@@ -36,7 +36,8 @@ await Promise.any(
 log.info("🛑 Stopping AuthCompanion");
 // Signal Oak to Shutdown
 controller.abort();
-// Wait for Oak to shutdown
-await server;
+
+// Shutdown oak
+//server;
 log.info("Good bye 👋 ");
 Deno.exit();
