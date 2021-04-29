@@ -5,8 +5,7 @@
 
 <h2 align="center">AuthCompanion</h2>
 
-<p align="center"> An effortless, open source, token-based user management server - well suited for
-microservices and static website projects.
+<p align="center"> An effortless, open source, token-based user management server - well suited for modern web projects.
 </p>
 
 <div align="center">
