@@ -6,7 +6,7 @@ import log from "../helpers/log.ts";
 export const logout = async (ctx: any) => {
   try {
     const userObj = await db.queryObject({
-      text: `SELECT email FROM users WHERE "UUID" = $1;`,
+      text: `SELECT email FROM users WHERE "uuid" = $1;`,
       args: [ctx.state.JWTclaims.id],
       fields: ["email"],
     });
@@ -22,9 +22,9 @@ export const logout = async (ctx: any) => {
 
     const result = await db.queryObject({
       text:
-        `Update "users" SET "refresh_token" = '' WHERE "UUID" = $1 RETURNING name, email, "UUID";`,
+        `Update "users" SET "refresh_token" = '' WHERE "uuid" = $1 RETURNING name, email, "uuid";`,
       args: [ctx.state.JWTclaims.id],
-      fields: ["name", "email", "UUID"],
+      fields: ["name", "email", "uuid"],
     });
 
     const user = result.rows[0];
@@ -32,7 +32,7 @@ export const logout = async (ctx: any) => {
     ctx.response.status = Status.OK;
     ctx.response.body = {
       data: {
-        id: user.UUID,
+        id: user.uuid,
         type: "Logout User",
         attributes: {
           name: user.name,

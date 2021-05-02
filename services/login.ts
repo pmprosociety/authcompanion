@@ -6,6 +6,7 @@ import { db } from "../db/db.ts";
 import log from "../helpers/log.ts";
 import { superstruct } from "../deps.ts";
 import { SECURE } from "../config.ts";
+import {sendHook} from "./webhook.ts";
 
 export const login = async (ctx: any) => {
   try {
@@ -32,13 +33,13 @@ export const login = async (ctx: any) => {
 
     const userObj = await db.queryObject({
       text:
-        `SELECT name, email, password, "UUID", active, refresh_token, created_at, updated_at FROM users WHERE email = $1;`,
+        `SELECT name, email, password, "uuid", active, refresh_token, created_at, updated_at FROM users WHERE email = $1;`,
       args: [email],
       fields: [
         "name",
         "email",
         "password",
-        "UUID",
+        "uuid",
         "active",
         "refresh_token",
         "created_at",
@@ -61,11 +62,11 @@ export const login = async (ctx: any) => {
       await db.release();
     }
     if (await compare(password, user.password)) {
+      sendHook({name: 'login', data: {email: user.email, id: user.uuid} })
       const accessToken = await makeAccesstoken(userObj);
       const refreshToken = await makeRefreshtoken(userObj);
       const date = new Date();
-      date.setTime(date.getTime() + (7 * 24 * 60 * 60 * 1000)) // TODO: Make configurable now, set to 7 days
-      ;
+      date.setTime(date.getTime() + (7 * 24 * 60 * 60 * 1000)); // TODO: Make configurable now, set to 7 days
 
       ctx.response.status = Status.OK;
 

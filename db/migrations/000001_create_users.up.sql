@@ -19,7 +19,7 @@ CREATE TABLE users (
                        name text NOT NULL,
                        email text NOT NULL UNIQUE,
                        password text NOT NULL,
-                       "UUID" uuid DEFAULT public.gen_random_uuid() NOT NULL,
+                       "uuid" uuid DEFAULT public.gen_random_uuid() NOT NULL,
                        refresh_token text NOT NULL,
                        active boolean NOT NULL,
                        created_at timestamp with time zone DEFAULT now() NOT NULL,

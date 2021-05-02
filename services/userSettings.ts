@@ -34,9 +34,9 @@ export const userSettings = async (ctx: any) => {
     const { name, email, password } = bodyValue;
 
     const userObj = await db.queryObject({
-      text: 'SELECT email FROM users WHERE "UUID" = $1;',
+      text: 'SELECT email FROM users WHERE "uuid" = $1;',
       args: [ctx.state.JWTclaims.id],
-      fields: ["UUID"],
+      fields: ["uuid"],
     });
 
     if (userObj.rowCount == 0) {
@@ -54,9 +54,9 @@ export const userSettings = async (ctx: any) => {
 
       const userObj1 = await db.queryObject({
         text:
-          `Update "users" SET name = $1, email = $2, password = $3, refresh_token = $4 WHERE "UUID" = $5 RETURNING name, email, "UUID", created_at, updated_at;`,
+          `Update "users" SET name = $1, email = $2, password = $3, refresh_token = $4 WHERE "uuid" = $5 RETURNING name, email, "uuid", created_at, updated_at;`,
         args: [name, email, hashpassword, jtiClaim, ctx.state.JWTclaims.id],
-        fields: ["name", "email", "UUID", "created_at", "updated_at"],
+        fields: ["name", "email", "uuid", "created_at", "updated_at"],
       });
 
       const user = userObj1.rows[0];
@@ -88,9 +88,9 @@ export const userSettings = async (ctx: any) => {
       // If the user does not provide a password, just update the user's name and email
       const userObj2 = await db.queryObject({
         text:
-          `UPDATE "users" SET name = $1, email = $2 WHERE "UUID" = $3 RETURNING name, email, "UUID", created_at, updated_at;`,
+          `UPDATE "users" SET name = $1, email = $2 WHERE "uuid" = $3 RETURNING name, email, "uuid", created_at, updated_at;`,
         args: [name, email, ctx.state.JWTclaims.id],
-        fields: ["name", "email", "UUID", "created_at", "updated_at"],
+        fields: ["name", "email", "uuid", "created_at", "updated_at"],
       });
 
       const user = userObj2.rows[0];
