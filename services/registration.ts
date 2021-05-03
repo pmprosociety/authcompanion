@@ -6,7 +6,6 @@ import { makeAccesstoken, makeRefreshtoken } from "../helpers/jwtutils.ts";
 import { db } from "../db/db.ts";
 import log from "../helpers/log.ts";
 import { superstruct } from "../deps.ts";
-import {sendHook} from "./webhook.ts";
 
 export const registration = async (ctx: any) => {
   try {

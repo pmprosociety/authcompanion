@@ -6,7 +6,6 @@ import { db } from "../db/db.ts";
 import log from "../helpers/log.ts";
 import { superstruct } from "../deps.ts";
 import { SECURE } from "../config.ts";
-import {sendHook} from "./webhook.ts";
 
 export const login = async (ctx: any) => {
   try {
@@ -62,7 +61,6 @@ export const login = async (ctx: any) => {
       await db.release();
     }
     if (await compare(password, user.password)) {
-      sendHook({name: 'login', data: {email: user.email, id: user.uuid} })
       const accessToken = await makeAccesstoken(userObj);
       const refreshToken = await makeRefreshtoken(userObj);
       const date = new Date();
