@@ -38,13 +38,13 @@ export const recoverToken = async (ctx: any) => {
 
     const userObj = await db.queryObject({
       text:
-        `SELECT name, email, password, "UUID", active, refresh_token, created_at, updated_at FROM users WHERE email = $1;`,
+        `SELECT name, email, password, "uuid", active, refresh_token, created_at, updated_at FROM users WHERE email = $1;`,
       args: [validatedtoken.payload.email],
       fields: [
         "name",
         "email",
         "password",
-        "UUID",
+        "uuid",
         "active",
         "refresh_token",
         "created_at",

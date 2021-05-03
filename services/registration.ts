@@ -53,12 +53,12 @@ export const registration = async (ctx: any) => {
 
     const userObj = await db.queryObject({
       text:
-        `INSERT INTO users (name, email, password, active, refresh_token) VALUES ($1, $2, $3, '1', $4) RETURNING name, email, "UUID", refresh_token, created_at, updated_at;`,
+        `INSERT INTO users (name, email, password, active, refresh_token) VALUES ($1, $2, $3, '1', $4) RETURNING name, email, "uuid", refresh_token, created_at, updated_at;`,
       args: [name, email, hashpassword, jtiClaim],
       fields: [
         "name",
         "email",
-        "UUID",
+        "uuid",
         "refresh_token",
         "created_at",
         "updated_at",
@@ -66,7 +66,6 @@ export const registration = async (ctx: any) => {
     });
 
     let user = userObj.rows[0];
-
     const accessToken = await makeAccesstoken(userObj);
     const refreshToken = await makeRefreshtoken(userObj);
 

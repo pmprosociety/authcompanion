@@ -21,12 +21,12 @@ export const refresh = async (ctx: any) => {
     if (validatedjwt) {
       const userObj = await db.queryObject({
         text:
-          `SELECT name, email, "UUID", refresh_token, active, created_at, updated_at FROM users WHERE refresh_token = $1;`,
+          `SELECT name, email, "uuid", refresh_token, active, created_at, updated_at FROM users WHERE refresh_token = $1;`,
         args: [validatedjwt?.payload.jti],
         fields: [
           "name",
           "email",
-          "UUID",
+          "uuid",
           "refresh_token",
           "active",
           "created_at",
@@ -57,7 +57,7 @@ export const refresh = async (ctx: any) => {
 
       ctx.response.body = {
         data: {
-          id: user.UUID,
+          id: user.uuid,
           type: "Refresh",
           attributes: {
             email: user.email,

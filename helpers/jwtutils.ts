@@ -22,7 +22,7 @@ export async function makeAccesstoken(result: any) {
 
     const jwtheader: Header = { alg: "HS256", typ: "JWT" };
     const jwtpayload: Payload = {
-      id: user.UUID,
+      id: user.uuid,
       name: user.name,
       email: user.email,
       exp: getNumericDate(date),
@@ -57,7 +57,7 @@ export async function makeRefreshtoken(result: any) {
 
     const jwtheader: Header = { alg: "HS256", typ: "JWT" };
     const jwtpayload: Payload = {
-      id: user.UUID,
+      id: user.uuid,
       name: user.name,
       email: user.email,
       jti: newjtiClaim,
@@ -110,7 +110,7 @@ export async function makeRecoverytoken(result: any) {
 
     const jwtheader: Header = { alg: "HS256", typ: "JWT" };
     const jwtpayload: Payload = {
-      id: user.UUID,
+      id: user.uuid,
       name: user.name,
       email: user.email,
       exp: getNumericDate(date),
