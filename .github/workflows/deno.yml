@@ -74,12 +74,12 @@ jobs:
       - name: Run Tests
         run: deno test -A --unstable
         env:
-          DBHOSTNAME: 127.0.0.1
-          DBPORT: 5432
-          DBPASSWORD: postgres
+          DB_HOSTNAME: 127.0.0.1
+          DB_PORT: 5432
+          DB_PASSWORD: postgres
           DATABASE: postgres
-          DBUSER: postgres
-          ACCESSTOKENKEY: testkeyplzignore
-          REFRESHTOKENKEY: testkeyplzignore
+          DB_USER: postgres
+          ACCESS_TOKEN_KEY: testkeyplzignore
+          REFRESH_TOKEN_KEY: testkeyplzignore
           SECURE: false
 
