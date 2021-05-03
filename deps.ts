@@ -25,4 +25,4 @@ export {
 export { format } from "https://deno.land/std@0.94.0/datetime/mod.ts";
 import * as superstruct from "https://cdn.skypack.dev/superstruct";
 export { superstruct };
-export { delay } from 'https://deno.land/x/delay@v0.2.0/mod.ts';
+export { delay } from "https://deno.land/x/delay@v0.2.0/mod.ts";

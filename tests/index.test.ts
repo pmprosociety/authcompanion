@@ -1,6 +1,9 @@
 // @ts-nocheck
 import app from "../app.ts";
-import { assertEquals, assertExists } from "https://deno.land/std@0.92.0/testing/asserts.ts";
+import {
+  assertEquals,
+  assertExists,
+} from "https://deno.land/std@0.92.0/testing/asserts.ts";
 import { Context } from "../test_deps.ts";
 import { db } from "../db/db.ts";
 import {
@@ -122,8 +125,10 @@ Deno.test("API Endpoint Test: /auth/login", async () => {
     "The API did not return a successful response",
   );
 
-  let { payload } = await validateJWT(ctx.response.body.data.attributes.access_token);
-  assertExists(payload.id, 'Token did not exist');
+  let { payload } = await validateJWT(
+    ctx.response.body.data.attributes.access_token,
+  );
+  assertExists(payload.id, "Token did not exist");
 });
 
 Deno.test("API Endpoint Test: /auth/refresh", async () => {

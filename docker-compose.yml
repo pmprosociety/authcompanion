@@ -32,7 +32,7 @@ services:
     depends_on:
         db:
           condition: service_healthy
-    command: ./migrate.linux-amd64 -source file://db/migrations -database "postgres://$DBUSER:$DBPASSWORD@$DBHOSTNAME:$DBPORT/$DATABASE?sslmode=disable" up
+    command: ./migrate.linux-amd64 -source file://db/migrations -database "postgres://$DB_USER:$DB_PASSWORD@$DB_HOSTNAME:$DB_PORT/$DATABASE?sslmode=disable" up
 
   api:
     build: .
