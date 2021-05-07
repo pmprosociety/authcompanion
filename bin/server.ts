@@ -34,10 +34,12 @@ await Promise.any(
 );
 
 log.info("🛑 Stopping AuthCompanion");
-// Signal Oak to Shutdown
+
+// In order to close the sever...
 controller.abort();
 
-// Shutdown oak
-//server;
+// Listen will stop listening for requests and the promise will resolve...
+await server;
+
 log.info("Good bye 👋 ");
 Deno.exit();
