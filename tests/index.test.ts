@@ -1,9 +1,6 @@
 // @ts-nocheck
 import app from "../app.ts";
-import {
-  assertEquals,
-  assertExists,
-} from "https://deno.land/std@0.92.0/testing/asserts.ts";
+import { assertEquals, assertExists } from "../test_deps.ts";
 import { Context } from "../test_deps.ts";
 import { db } from "../db/db.ts";
 import {

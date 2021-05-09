@@ -10,7 +10,9 @@ import {
 
 import { db } from "../db/db.ts";
 import log from "./log.ts";
-import { ACCESSTOKENKEY, REFRESHTOKENKEY } from "../config.ts";
+import config from "../config.ts";
+
+const { ACCESSTOKENKEY, REFRESHTOKENKEY } = config;
 
 export async function makeAccesstoken(result: any) {
   var date = new Date();

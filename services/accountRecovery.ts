@@ -1,24 +1,17 @@
-// @ts-nocheck
 import { Status } from "../deps.ts";
 import { makeRecoverytoken } from "../helpers/jwtutils.ts";
 import { db } from "../db/db.ts";
 import log from "../helpers/log.ts";
 import { SmtpClient } from "../deps.ts";
 import { superstruct } from "../deps.ts";
-import {
-  FROMADDRESS,
-  RECOVERYURL,
-  SMTPHOSTNAME,
-  SMTPPASSWORD,
-  SMTPPORT,
-  SMTPUSER,
-} from "../config.ts";
+import config from "../config.ts";
 
+// const { SMTPHOSTNAME, SMTPPORT, SMTPUSER, SMTPPASSWORD, FROMADDRESS, RECOVERYURL } = config;
 const connectConfig: any = {
-  hostname: SMTPHOSTNAME,
-  port: Number(SMTPPORT),
-  username: SMTPUSER,
-  password: SMTPPASSWORD,
+  hostname: config.SMTPHOSTNAME,
+  port: Number(config.SMTPPORT),
+  username: config.SMTPUSER,
+  password: config.SMTPPASSWORD,
 };
 
 export const accountRecovery = async (ctx: any) => {
@@ -61,12 +54,12 @@ export const accountRecovery = async (ctx: any) => {
       const recoveryToken = await makeRecoverytoken(userObj);
 
       await client.send({
-        from: FROMADDRESS ?? "no-reply@example.com",
-        to: user.email,
+        from: config.FROMADDRESS ?? "no-reply@example.com",
+        to: <string> user.email,
         subject: "Account Recovery",
         content: `Hello 👋 </br>
           You are receiving this email because you have attempted to recover your account</br>
-          Please use the following link to login again: <a href="${RECOVERYURL}?token=${recoveryToken.token}">Click Here</a>`,
+          Please use the following link to login again: <a href="${config.RECOVERYURL}?token=${recoveryToken.token}">Click Here</a>`,
       });
 
       await client.close();

@@ -1,12 +1,8 @@
 import { Pool } from "../deps.ts";
-import {
-  DATABASE,
-  DBCONNECTIONS,
-  DBHOSTNAME,
-  DBPASSWORD,
-  DBPORT,
-  DBUSER,
-} from "../config.ts";
+import config from "../config.ts";
+
+const { DBUSER, DATABASE, DBHOSTNAME, DBPASSWORD, DBPORT, DBCONNECTIONS } =
+  config;
 
 const pool = new Pool({
   user: DBUSER,

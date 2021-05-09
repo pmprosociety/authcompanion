@@ -5,7 +5,7 @@ import { makeAccesstoken, makeRefreshtoken } from "../helpers/jwtutils.ts";
 import { db } from "../db/db.ts";
 import log from "../helpers/log.ts";
 import { superstruct } from "../deps.ts";
-import { SECURE } from "../config.ts";
+import config from "../config.ts";
 
 export const login = async (ctx: any) => {
   try {
@@ -71,7 +71,7 @@ export const login = async (ctx: any) => {
       ctx.cookies.set("refreshToken", refreshToken, {
         httpOnly: true,
         expires: date,
-        secure: SECURE?.toLowerCase() !== "false",
+        secure: config.SECURE?.toLowerCase() !== "false",
         sameSite: "none",
       });
 

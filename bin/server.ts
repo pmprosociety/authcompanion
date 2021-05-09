@@ -1,8 +1,8 @@
 import app from "../app.ts";
 import log from "../helpers/log.ts";
-import { AUTHPORT } from "../config.ts";
+import config from "../config.ts";
 
-const PORT: number = Number(AUTHPORT ?? 3002);
+const PORT: number = Number(config.AUTHPORT ?? 3002);
 const controller = new AbortController();
 const { signal } = controller;
 
@@ -24,11 +24,8 @@ const server = app.listen({ port: PORT, signal });
 // Listen for SigTerm (Docker shutdown) SigInt (CTRL-C) and SIGABRT.
 await Promise.any(
   [
-    // @ts-ignore
     Deno.signal(Deno.Signal.SIGTERM),
-    // @ts-ignore
     Deno.signal(Deno.Signal.SIGINT),
-    // @ts-ignore
     Deno.signal(Deno.Signal.SIGABRT),
   ],
 );
