@@ -37,22 +37,22 @@
 To run AuthCompanion, first clone using git from this repository.
 
 ```sh
-git clone https://github.com/pmprosociety/authcompanion.git
+$ git clone https://github.com/pmprosociety/authcompanion.git
 
-cd authcompanion
+$ cd authcompanion
 ```
 
 Copy the example config file and change the default values in the .env file (or
 you know... keep it if you're just trying things out)
 
 ```sh
-cp env.example .env
+$ cp env.example .env
 ```
 
 Spin up the AuthCompanion stack by running this docker compose command:
 
 ```sh
-docker-compose up
+$ docker-compose up
 ```
 
 🚀 The API server will be ready on localhost. See documentation below.
@@ -60,7 +60,7 @@ docker-compose up
 ## Features
 
 AuthCompanion aims to satisfy your most common identity and user management
-needs for single factor authentication. The server includes APIs for:
+needs for single factor authentication.
 
 - [x] **Login and Registration:** Create and sign into accounts using email and
   password - users are stored in AuthCompanion's Postgres database.
@@ -69,6 +69,8 @@ needs for single factor authentication. The server includes APIs for:
 - [x] **Account Recovery:** Restore a user's access to their account using the
   **Forgot Password** flow. This flow includes a special link for recovering an
   account quickly.
+- [x] **Hooks** Receive notifications via a webhook after a user has: logged in,
+  registered, or updated their account.
 - [x] **Token Lifecycle & Logout:** Keep the user's token refreshed while they
   are using your application. Then, when a user is done in your app, securely
   log them out.
@@ -77,34 +79,16 @@ needs for single factor authentication. The server includes APIs for:
 your own UI framework to make use of these feature APIs. We have a demo below
 that can help get you started.
 
-## Who is this for?
-
-AuthCompanion is a JavaScript server which helps you build web application
-**faster**.
-
 The default configuration strives to be reasonable, sane and reliable for
 gettings started easily - extra hardening should be done when moving to
 production environments.
 
-We ensure that AuthCompanion can be useful right away and run smoothly...
-without having to study the docs for hours.
-
-## Demo
+## Starter Template
 
 The vue starter app is an example UI to help guide you in implementing
 AuthCompanion's APIs: https://github.com/pmprosociety/authcompanion-vue-starter
 
-(uses Vue 3 + Vite + Tailwind CSS)
-
-## Related Readings
-
-Be sure to familiarize yourself with token-based authentication using JSON Web
-Tokens.
-
-- [The Ultimate Guide to handling JWTs on frontend
-  clients](https://hasura.io/blog/best-practices-of-using-jwt-with-graphql/)
-
-- [Web Authentication Method Comparison](https://testdriven.io/blog/web-authentication-methods/#token-based-authentication)
+(built with Vue 3 + Vite + Tailwind CSS)
 
 ## API Documentation
 
@@ -118,10 +102,18 @@ Content-Type: application/json
 
 ### /auth/register
 
-Description: Register your first user.
+Description: Register your first user. Returns a JWT access token and set a
+refresh token (as a http only cookie).
 
 **POST** Request Body:
-`{ "name":"Authy Man", "email":"hello_world@authcompanion.com", "password":"mysecretpass" }`
+
+```yaml
+{
+    "name": "Authy Person",
+    "email": "hello_world@authcompanion.com",
+    "password": "mysecretpass"
+}
+```
 
 ---
 
@@ -131,18 +123,24 @@ Description: If the request provides a valid username and password, return a JWT
 access token and set a refresh token (as a http only cookie).
 
 **POST** Request Body:
-`{ "email":"hello@authcompanion.com", "password":"mysecretpass" }`
+
+```yaml
+{
+    "email": "hello@authcompanion.com",
+    "password": "mysecretpass"
+}
+```
 
 ---
 
 ### /auth/refresh
 
-Description: If the request has a valid refresh token (stored as cookie) return
-an access token and set a new refresh token cookie.
+Description: If the request has a valid refresh token (stored as http only
+cookie) return an access token and set a new refresh token http only cookie.
 
 **POST** Request Body: None Required
 
-Cookie required: refreshToken=_user's refresh token_
+Cookie required: refreshToken={user's refresh token}
 
 ---
 
@@ -151,23 +149,37 @@ Cookie required: refreshToken=_user's refresh token_
 Description: Update the user's record by changing the name, email and password.
 
 **POST** Request Body:
-`{ "name":"Authy Man", "email":"hello_world@authcompanion.com", "password":"mysecretpass" }`
+
+```yaml
+{
+    "name": "Authy Person1",
+    "email": "hello_world1@authcompanion.com",
+    "password": "mysecretpass"
+}
+```
+
 *password field is optional
 
-Authorization Required: Bearer _user's access token_
+Authorization Required: Bearer {user's access token}
 
 ---
 
 ### /auth/recovery
 
-Description: If the request has a valid user, issue an account recovery email
-which contains a URL with a recovery token in the query parameters. Works
+Description: If the request has a valid user email, issue an account recovery
+email which contains a URL with a recovery token in the query parameters. Works
 together with '/auth/recovery/' to restore a user's access to an account. UI
 will be responsible for 1) trading the recovery token for an access token using
 'auth/recovery/token' below 2) handling how to route the user within the
 application.
 
-**POST** Request Body: `{ "email":"hello_world@authcompanion.com" }`
+**POST** Request Body:
+
+```yaml
+{
+    "email": "hello_world@authcompanion.com"
+}
+```
 
 ---
 
@@ -177,7 +189,13 @@ Description: If the request has a valid and short lived recovery token (issued
 from the recovery email), trade it for a new access token, so the user can
 login.
 
-**POST** Request Body: `{ "token":"_recovery token here_" }`
+**POST** Request Body:
+
+```yaml
+{
+    "token": "{user's recovery token here}"
+}
+```
 
 ---
 
@@ -187,13 +205,23 @@ Description: Only the user's refresh token will be invalidated using this route.
 Authorization tokens are still valid for the period of their expiration date.
 This means, the UI is responsible for implementation of these APIs should remove
 the Authorization token from the application memory and require the user to
-login to receive a new token.
+login again to receive a new token.
 
 **GET** Request Body: None Required
 
-Authorization Required: Bearer _user's access token_
+Authorization Required: Bearer {user's access token}
 
 ---
+
+## Related Readings
+
+Be sure to familiarize yourself with token-based authentication using JSON Web
+Tokens.
+
+- [The Ultimate Guide to handling JWTs on frontend
+  clients](https://hasura.io/blog/best-practices-of-using-jwt-with-graphql/)
+
+- [Web Authentication Method Comparison](https://testdriven.io/blog/web-authentication-methods/#token-based-authentication)
 
 ## License
 

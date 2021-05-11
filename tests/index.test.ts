@@ -1,9 +1,6 @@
 // @ts-nocheck
 import app from "../app.ts";
-import {
-  assertEquals,
-  assertExists,
-} from "https://deno.land/std@0.92.0/testing/asserts.ts";
+import { assertEquals, assertExists } from "../test_deps.ts";
 import { Context } from "../test_deps.ts";
 import { db } from "../db/db.ts";
 import {
@@ -15,7 +12,7 @@ import {
 import { registration } from "../services/registration.ts";
 import { login } from "../services/login.ts";
 import { refresh } from "../services/refresh.ts";
-import { userSettings } from "../services/userSettings.ts";
+import { userProfile } from "../services/userProfile.ts";
 import { recoverToken } from "../services/recoverytoken.ts";
 import { logout } from "../services/logout.ts";
 import { accountRecovery } from "../services/accountRecovery.ts";
@@ -200,7 +197,7 @@ Deno.test("API Endpoint Test: /auth/users/me", async () => {
 
   ctx.state.JWTclaims = payload;
 
-  await userSettings(ctx);
+  await userProfile(ctx);
 
   assertEquals(
     ctx.response.status,

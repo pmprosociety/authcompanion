@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { Status } from "../deps.ts";
 import { db } from "../db/db.ts";
 import log from "../helpers/log.ts";

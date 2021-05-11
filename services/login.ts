@@ -1,11 +1,11 @@
-// @ts-nocheck
 import { Status } from "../deps.ts";
 import { compare } from "../deps.ts";
 import { makeAccesstoken, makeRefreshtoken } from "../helpers/jwtutils.ts";
 import { db } from "../db/db.ts";
 import log from "../helpers/log.ts";
 import { superstruct } from "../deps.ts";
-import { SECURE } from "../config.ts";
+import config from "../config.ts";
+import { sendHook } from "./webhook.ts";
 
 export const login = async (ctx: any) => {
   try {
@@ -60,7 +60,7 @@ export const login = async (ctx: any) => {
       );
       await db.release();
     }
-    if (await compare(password, user.password)) {
+    if (await compare(password, <string> user.password)) {
       const accessToken = await makeAccesstoken(userObj);
       const refreshToken = await makeRefreshtoken(userObj);
       const date = new Date();
@@ -71,24 +71,30 @@ export const login = async (ctx: any) => {
       ctx.cookies.set("refreshToken", refreshToken, {
         httpOnly: true,
         expires: date,
-        secure: SECURE?.toLowerCase() !== "false",
+        secure: config.SECURE?.toLowerCase() !== "false",
         sameSite: "none",
       });
+
+      const userAttributes = {
+        name: user.name,
+        email: user.email,
+        created: user.created_at,
+        updated: user.updated_at,
+        access_token: accessToken.token,
+        access_token_expiry: accessToken.expiration,
+      };
 
       ctx.response.body = {
         data: {
           id: user.uuid,
           type: "Login",
-          attributes: {
-            name: user.name,
-            email: user.email,
-            created: user.created_at,
-            updated: user.updated_at,
-            access_token: accessToken.token,
-            access_token_expiry: accessToken.expiration,
-          },
+          attributes: userAttributes,
         },
       };
+      sendHook({
+        name: "post-login",
+        data: { id: user.uuid, ...userAttributes },
+      });
       await db.release();
     } else {
       ctx.throw(
