@@ -70,7 +70,7 @@ needs for single factor authentication.
   **Forgot Password** flow. This flow includes a special link for recovering an
   account quickly.
 - [x] **Hooks** Receive notifications via a webhook after a user has: logged in,
-  registered, or updated thier account.
+  registered, or updated their account.
 - [x] **Token Lifecycle & Logout:** Keep the user's token refreshed while they
   are using your application. Then, when a user is done in your app, securely
   log them out.
