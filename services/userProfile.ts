@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { Status } from "../deps.ts";
 import { hash } from "../deps.ts";
 import { v4 } from "../deps.ts";
@@ -6,8 +5,9 @@ import { makeAccesstoken, makeRefreshtoken } from "../helpers/jwtutils.ts";
 import { db } from "../db/db.ts";
 import log from "../helpers/log.ts";
 import { superstruct } from "../deps.ts";
+import { sendHook } from "./webhook.ts";
 
-export const userSettings = async (ctx: any) => {
+export const userProfile = async (ctx: any) => {
   try {
     if (!ctx.request.hasBody) {
       log.debug("Request has no body");
@@ -69,20 +69,25 @@ export const userSettings = async (ctx: any) => {
         httpOnly: true,
         expires: new Date("2022-01-01T00:00:00+00:00"),
       });
+      const userAttributes = {
+        name: user.name,
+        email: user.email,
+        created: user.created_at,
+        updated: user.updated_at,
+        access_token: accessToken.token,
+        access_token_expiry: accessToken.expiration,
+      };
       ctx.response.body = {
         data: {
           id: user.uuid,
           type: "Updated User",
-          attributes: {
-            name: user.name,
-            email: user.email,
-            created: user.created_at,
-            updated: user.updated_at,
-            access_token: accessToken.token,
-            access_token_expiry: accessToken.expiration,
-          },
+          attributes: userAttributes,
         },
       };
+      sendHook({
+        name: "post-profile-update",
+        data: { id: user.uuid, ...userAttributes },
+      });
       await db.release();
     } else {
       // If the user does not provide a password, just update the user's name and email

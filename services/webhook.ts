@@ -8,7 +8,7 @@ interface WebhookPayload {
 }
 
 export const sendHook = async (payload: WebhookPayload) => {
-  if (`${config.WEBHOOKURL}` === "") {
+  if (config.WEBHOOKURL == undefined || `${config.WEBHOOKURL}` === "") {
     return;
   }
   try {

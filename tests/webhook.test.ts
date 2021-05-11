@@ -28,11 +28,19 @@ const webhookMonitor = (): Promise<void> => {
     ctx.response.body = "Hello World!";
   });
 
-   return app.listen({ port: 15000, signal });
+  return app.listen({ port: 15000, signal });
 };
 
-Deno.test("No URL Noop", async () => {
+Deno.test("No URL doesnt crash", async () => {
   config.WEBHOOKURL = "";
+  await sendHook({ name: "Test", data: {} });
+  const mh = getMemoryHandler(logger.handlers);
+  assertEquals(mh?.messages.length, 0);
+  clearLogger();
+});
+
+Deno.test("Undefined URL Doesnt crash", async () => {
+  config.WEBHOOKURL = undefined;
   await sendHook({ name: "Test", data: {} });
   const mh = getMemoryHandler(logger.handlers);
   assertEquals(mh?.messages.length, 0);

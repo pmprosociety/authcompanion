@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { Status } from "../deps.ts";
 import {
   makeAccesstoken,

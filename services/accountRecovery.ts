@@ -2,16 +2,15 @@ import { Status } from "../deps.ts";
 import { makeRecoverytoken } from "../helpers/jwtutils.ts";
 import { db } from "../db/db.ts";
 import log from "../helpers/log.ts";
-import { SmtpClient } from "../deps.ts";
+import { ConnectConfigWithAuthentication, SmtpClient } from "../deps.ts";
 import { superstruct } from "../deps.ts";
 import config from "../config.ts";
 
-// const { SMTPHOSTNAME, SMTPPORT, SMTPUSER, SMTPPASSWORD, FROMADDRESS, RECOVERYURL } = config;
-const connectConfig: any = {
-  hostname: config.SMTPHOSTNAME,
+const connectConfig: ConnectConfigWithAuthentication = {
+  hostname: config.SMTPHOSTNAME ? config.SMTPHOSTNAME : "",
   port: Number(config.SMTPPORT),
-  username: config.SMTPUSER,
-  password: config.SMTPPASSWORD,
+  username: config.SMTPUSER ? config.SMTPUSER : "",
+  password: config.SMTPPASSWORD ? config.SMTPPASSWORD : "",
 };
 
 export const accountRecovery = async (ctx: any) => {

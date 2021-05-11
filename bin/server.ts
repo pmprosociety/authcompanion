@@ -6,7 +6,6 @@ const PORT: number = Number(config.AUTHPORT ?? 3002);
 const controller = new AbortController();
 const { signal } = controller;
 
-// @ts-ignore
 app.addEventListener("listen", ({ secure, hostname, port }) => {
   const protocol = secure ? "https://" : "http://";
   log.debug(`HTTPS is ${secure ? "on" : "off"}`);

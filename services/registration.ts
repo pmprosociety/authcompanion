@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { Status } from "../deps.ts";
 import { hash } from "../deps.ts";
 import { v4 } from "../deps.ts";
@@ -6,6 +5,7 @@ import { makeAccesstoken, makeRefreshtoken } from "../helpers/jwtutils.ts";
 import { db } from "../db/db.ts";
 import log from "../helpers/log.ts";
 import { superstruct } from "../deps.ts";
+import { sendHook } from "./webhook.ts";
 
 export const registration = async (ctx: any) => {
   try {
@@ -74,19 +74,24 @@ export const registration = async (ctx: any) => {
       httpOnly: true,
       expires: new Date("2022-01-01T00:00:00+00:00"),
     });
+    const userAttributes = {
+      name: user.name,
+      email: user.email,
+      created: user.created_at,
+      access_token: accessToken.token,
+      access_token_expiry: accessToken.expiration,
+    };
     ctx.response.body = {
       data: {
         id: user.uuid,
         type: "Register",
-        attributes: {
-          name: user.name,
-          email: user.email,
-          created: user.created_at,
-          access_token: accessToken.token,
-          access_token_expiry: accessToken.expiration,
-        },
+        attributes: userAttributes,
       },
     };
+    sendHook({
+      name: "post-registration",
+      data: { id: user.uuid, ...userAttributes },
+    });
     await db.release();
   } catch (err) {
     log.error(err);
@@ -99,6 +104,5 @@ export const registration = async (ctx: any) => {
         detail: err.message,
       }],
     };
-  } finally {
   }
 };
