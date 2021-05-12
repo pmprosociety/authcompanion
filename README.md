@@ -67,10 +67,12 @@ needs for single factor authentication.
 - [x] **Profile and Credentials Management:** Update the password and profile
   information of your users using AuthCompanion's REST APIs.
 - [x] **Account Recovery:** Restore a user's access to their account using the
-  **Forgot Password** flow. This flow includes a special link for recovering an
-  account quickly.
-- [x] **Hooks** Receive notifications via a webhook after a user has: logged in,
-  registered, or updated their account.
+  **Forgot Password** flow. This flow sends a special link via email for
+  recovering an account quickly.
+- [x] **Hooks:** Receive notifications via a webhook after a user has: logged
+  in, registered, or updated their account. Hooks are used to trigger an
+  integration or custom logic each time a user performs an action, like logging
+  in.
 - [x] **Token Lifecycle & Logout:** Keep the user's token refreshed while they
   are using your application. Then, when a user is done in your app, securely
   log them out.
@@ -115,6 +117,24 @@ refresh token (as a http only cookie).
 }
 ```
 
+Response:
+
+```yaml
+{
+  "data": {
+    "id": "6eee5ca5-d68f-4698-906d-62af6d705f05",
+    "type": "Register",
+    "attributes": {
+      "name": "Authy Person",
+      "email": "hello_world@authcompanion.com",
+      "created": "2021-05-12T00:05:13.243Z",
+      "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZlZWU1Y2E1LWQ2OGYtNDY5OC05MDZkLTYyYWY2ZDcwNWYwNSIsIm5hbWUiOiJBdXRoeSBQZXJzb24iLCJlbWFpbCI6ImhlbGxvX3dvcmxkQGF1dGhjb21wYW5pb24uY29tIiwiZXhwIjoxNjIwNzkyMzEzfQ.VpkhYRnAzIE75dWVOKLMKHocB2R0kCRsEV6DDctx2h8",
+      "access_token_expiry": 1620792313
+    }
+  }
+}
+```
+
 ---
 
 ### /auth/login
@@ -128,6 +148,25 @@ access token and set a refresh token (as a http only cookie).
 {
     "email": "hello@authcompanion.com",
     "password": "mysecretpass"
+}
+```
+
+Response:
+
+```yaml
+{
+  "data": {
+    "id": "6eee5ca5-d68f-4698-906d-62af6d705f05",
+    "type": "Login",
+    "attributes": {
+      "name": "Authy Person",
+      "email": "hello_world@authcompanion.com",
+      "created": "2021-05-12T00:05:13.243Z",
+      "updated": "2021-05-12T00:05:13.247Z",
+      "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZlZWU1Y2E1LWQ2OGYtNDY5OC05MDZkLTYyYWY2ZDcwNWYwNSIsIm5hbWUiOiJBdXRoeSBQZXJzb24iLCJlbWFpbCI6ImhlbGxvX3dvcmxkQGF1dGhjb21wYW5pb24uY29tIiwiZXhwIjoxNjIwNzkyNDg2fQ.XPRAwMtkus2gd1MaTW2wDEs2SF048uOco_aAiQfTYhQ",
+      "access_token_expiry": 1620792486
+    }
+  }
 }
 ```
 
@@ -226,7 +265,6 @@ Tokens.
 ## License
 
 AuthCompanion is licensed under the [MIT](https://opensource.org/licenses/MIT)
-license.
 
 ## Contributions
 
