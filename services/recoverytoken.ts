@@ -68,6 +68,8 @@ export const recoverToken = async (ctx: any) => {
         attributes: {
           name: user.name,
           email: user.email,
+          created: user.created_at,
+          updated: user.updated_at,
           access_token: accessToken.token,
           access_token_expiry: accessToken.expiration,
         },

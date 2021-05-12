@@ -134,7 +134,6 @@ Response:
   }
 }
 ```
-
 ---
 
 ### /auth/login
@@ -169,7 +168,6 @@ Response:
   }
 }
 ```
-
 ---
 
 ### /auth/refresh
@@ -181,6 +179,24 @@ cookie) return an access token and set a new refresh token http only cookie.
 
 Cookie required: refreshToken={user's refresh token}
 
+Response:
+
+```yaml
+{
+  "data": {
+    "id": "6eee5ca5-d68f-4698-906d-62af6d705f05",
+    "type": "Refresh",
+    "attributes": {
+      "name": "Authy Person",
+      "email": "hello_world@authcompanion.com",
+      "created": "2021-05-12T00:05:13.243Z",
+      "updated": "2021-05-12T02:25:05.709Z",
+      "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZlZWU1Y2E1LWQ2OGYtNDY5OC05MDZkLTYyYWY2ZDcwNWYwNSIsIm5hbWUiOiJBdXRoeSBQZXJzb24iLCJlbWFpbCI6ImhlbGxvX3dvcmxkQGF1dGhjb21wYW5pb24uY29tIiwiZXhwIjoxNjIwODAwODYwfQ.dqPcv27hxmWcYastcXgRyrHKE3lFvz4OD8wPz6yAmPM",
+      "access_token_expiry": 1620800860
+    }
+  }
+}
+```
 ---
 
 ### /auth/users/me
@@ -196,11 +212,28 @@ Description: Update the user's record by changing the name, email and password.
     "password": "mysecretpass"
 }
 ```
-
 *password field is optional
 
 Authorization Required: Bearer {user's access token}
 
+Response:
+
+```yaml
+{
+  "data": {
+    "id": "6eee5ca5-d68f-4698-906d-62af6d705f05",
+    "type": "Updated User",
+    "attributes": {
+      "name": "Authy Person1",
+      "email": "hello_world1@authcompanion.com",
+      "created": "2021-05-12T00:05:13.243Z",
+      "updated": "2021-05-12T02:29:06.708Z",
+      "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZlZWU1Y2E1LWQ2OGYtNDY5OC05MDZkLTYyYWY2ZDcwNWYwNSIsIm5hbWUiOiJBdXRoeSBQZXJzb24xIiwiZW1haWwiOiJoZWxsb193b3JsZDFAYXV0aGNvbXBhbmlvbi5jb20iLCJleHAiOjE2MjA4MDA5NDd9.44lKad-6le-wmofkQ9QebIkdB6QtotnvAW7aApxfiA0",
+      "access_token_expiry": 1620800947
+    }
+  }
+}
+```
 ---
 
 ### /auth/recovery
@@ -220,6 +253,16 @@ application.
 }
 ```
 
+Response:
+
+```yaml
+{
+  "data": {
+    "type": "Recover User",
+    "detail": "An email containing a recovery link has been sent to the email address provided."
+  }
+}
+```
 ---
 
 ### auth/recovery/token
@@ -235,7 +278,23 @@ login.
     "token": "{user's recovery token here}"
 }
 ```
+Response:
 
+```yaml
+{
+  "data": {
+    "type": "Recovery Login",
+    "attributes": {
+      "name": "Authy Person1",
+      "email": "hello_world1@authcompanion.com",
+      "created": "2021-05-12T00:05:13.243Z",
+      "updated": "2021-05-12T02:35:00.443Z",
+      "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZlZWU1Y2E1LWQ2OGYtNDY5OC05MDZkLTYyYWY2ZDcwNWYwNSIsIm5hbWUiOiJBdXRoeSBQZXJzb24xIiwiZW1haWwiOiJoZWxsb193b3JsZDFAYXV0aGNvbXBhbmlvbi5jb20iLCJleHAiOjE2MjA4MDE0MDl9.sUhT-tDK_ZW4zADhfBku6Z9mMDm6yuELYfDgmwLojz4",
+      "access_token_expiry": 1620801409
+    }
+  }
+}
+```
 ---
 
 ### /auth/logout
@@ -250,6 +309,20 @@ login again to receive a new token.
 
 Authorization Required: Bearer {user's access token}
 
+Response:
+
+```yaml
+{
+  "data": {
+    "id": "6eee5ca5-d68f-4698-906d-62af6d705f05",
+    "type": "Logout User",
+    "attributes": {
+      "name": "Authy Person1",
+      "email": "hello_world1@authcompanion.com"
+    }
+  }
+}
+```
 ---
 
 ## Related Readings

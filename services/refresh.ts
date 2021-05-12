@@ -59,6 +59,7 @@ export const refresh = async (ctx: any) => {
           id: user.uuid,
           type: "Refresh",
           attributes: {
+            name: user.name,
             email: user.email,
             created: user.created_at,
             updated: user.updated_at,
