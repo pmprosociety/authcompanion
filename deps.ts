@@ -13,9 +13,9 @@ export {
   verify,
 } from "https://deno.land/x/djwt@v2.1/mod.ts";
 export type { Header, Payload } from "https://deno.land/x/djwt@v2.1/mod.ts";
-export { v4 } from "https://deno.land/std@0.94.0/uuid/mod.ts";
-export * as log from "https://deno.land/std@0.94.0/log/mod.ts";
-export { LogRecord } from "https://deno.land/std@0.94.0/log/logger.ts";
+export { v4 } from "https://deno.land/std@0.97.0/uuid/mod.ts";
+export * as log from "https://deno.land/std@0.97.0/log/mod.ts";
+export { LogRecord } from "https://deno.land/std@0.97.0/log/logger.ts";
 export { SmtpClient } from "https://deno.land/x/smtp@v0.7.0/mod.ts";
 export type { ConnectConfigWithAuthentication } from "https://deno.land/x/smtp@v0.7.0/mod.ts";
 export {
@@ -23,8 +23,8 @@ export {
   green,
   red,
   yellow,
-} from "https://deno.land/std@0.94.0/fmt/colors.ts";
-export { format } from "https://deno.land/std@0.94.0/datetime/mod.ts";
+} from "https://deno.land/std@0.97.0/fmt/colors.ts";
+export { format } from "https://deno.land/std@0.97.0/datetime/mod.ts";
 import * as superstruct from "https://cdn.skypack.dev/superstruct";
 export { superstruct };
 export { delay } from "https://deno.land/x/delay@v0.2.0/mod.ts";
