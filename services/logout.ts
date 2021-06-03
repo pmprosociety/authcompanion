@@ -50,6 +50,5 @@ export const logout = async (ctx: any) => {
         detail: err.message,
       }],
     };
-  } finally {
   }
 };

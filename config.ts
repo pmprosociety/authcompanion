@@ -52,6 +52,10 @@ const RECOVERYURL = Deno.env.get("RECOVERY_REDIRECT_URL");
 const WEBHOOKURL = Deno.env.get("WEBHOOK_URL");
 const WEBHOOKSECRET = Deno.env.get("WEBHOOK_SECRET");
 
+//Client Mode related environment variables
+const CLIENTMODE = Deno.env.get("CLIENT_MODE");
+const CLIENTORIGIN = Deno.env.get("CLIENT_ORIGIN");
+
 export default {
   AUTHPORT,
   ORIGIN,
@@ -74,4 +78,6 @@ export default {
   RECOVERYURL,
   WEBHOOKURL,
   WEBHOOKSECRET,
+  CLIENTMODE,
+  CLIENTORIGIN,
 };

@@ -64,6 +64,10 @@ export const accountRecovery = async (ctx: any) => {
       await client.close();
 
       ctx.response.status = Status.OK;
+      ctx.response.headers.set(
+        "x-authc-client-origin",
+        `${config.CLIENTORIGIN}`,
+      );
       ctx.response.body = {
         data: {
           type: "Recover User",
@@ -74,6 +78,10 @@ export const accountRecovery = async (ctx: any) => {
     } else {
       // if the request has no valid email in the db, simulate an email being sent
       ctx.response.status = Status.OK;
+      ctx.response.headers.set(
+        "x-authc-client-origin",
+        `${config.CLIENTORIGIN}`,
+      );
       ctx.response.body = {
         data: {
           type: "Recover User",
@@ -93,6 +101,5 @@ export const accountRecovery = async (ctx: any) => {
         detail: err.message,
       }],
     };
-  } finally {
   }
 };

@@ -86,6 +86,5 @@ export const recoverToken = async (ctx: any) => {
         detail: err.message,
       }],
     };
-  } finally {
   }
 };

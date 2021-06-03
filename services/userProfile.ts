@@ -4,6 +4,7 @@ import { v4 } from "../deps.ts";
 import { makeAccesstoken, makeRefreshtoken } from "../helpers/jwtutils.ts";
 import { db } from "../db/db.ts";
 import log from "../helpers/log.ts";
+import config from "../config.ts";
 import { superstruct } from "../deps.ts";
 import { sendHook } from "./webhook.ts";
 
@@ -65,6 +66,10 @@ export const userProfile = async (ctx: any) => {
       const refreshToken = await makeRefreshtoken(userObj1);
 
       ctx.response.status = Status.OK;
+      ctx.response.headers.set(
+        "x-authc-client-origin",
+        `${config.CLIENTORIGIN}`,
+      );
       ctx.cookies.set("refreshToken", refreshToken, {
         httpOnly: true,
         expires: new Date("2022-01-01T00:00:00+00:00"),
@@ -104,6 +109,10 @@ export const userProfile = async (ctx: any) => {
       const refreshToken = await makeRefreshtoken(userObj2);
 
       ctx.response.status = Status.OK;
+      ctx.response.headers.set(
+        "x-authc-client-origin",
+        `${config.CLIENTORIGIN}`,
+      );
       ctx.cookies.set("refreshToken", refreshToken, {
         httpOnly: true,
         expires: new Date("2022-01-01T00:00:00+00:00"),
@@ -135,6 +144,5 @@ export const userProfile = async (ctx: any) => {
         detail: err.message,
       }],
     };
-  } finally {
   }
 };
