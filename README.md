@@ -29,8 +29,6 @@
 
 ## Introduction
 
-### Docker Deployment
-
 To run AuthCompanion, download the source code or use git to clone this
 repository
 

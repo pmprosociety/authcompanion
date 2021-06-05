@@ -21,7 +21,7 @@ app.use(serverIndex.routes());
 app.use(serverIndex.allowedMethods());
 
 // Client Routes
-if (config.CLIENTMODE === "on") {
+if (config.CLIENTMODE?.toLowerCase() !== "false") {
   app.use(clientIndex.routes());
   app.use(clientIndex.allowedMethods());
 }
