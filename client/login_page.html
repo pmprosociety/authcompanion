@@ -108,7 +108,7 @@
               const resbody = await response.json();
 
               if (response.ok) {
-                window.localStorage.setItem("AUTH_KEY", resbody.data.attributes.access_token);
+                window.localStorage.setItem("ACCESS_TOKEN", resbody.data.attributes.access_token);
 
                 showError.value = false;
 

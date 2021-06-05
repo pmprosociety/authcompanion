@@ -43,7 +43,7 @@
                   type="text"
                   v-model="name"
                   class="block w-full mt-1 text-black placeholder-gray-500 bg-gray-100 border-transparent rounded-md focus:border-gray-500 focus:bg-white focus:ring-0"
-                  placeholder="Authy Person"
+                  placeholder=""
                 />
               </label>
               <label class="block">
@@ -52,7 +52,7 @@
                   type="text"
                   v-model="email"
                   class="block w-full mt-1 text-black placeholder-gray-500 bg-gray-100 border-transparent rounded-md focus:border-gray-500 focus:bg-white focus:ring-0"
-                  placeholder="AuthCompanion@example.com"
+                  placeholder="hello@example.com"
                 />
               </label>
               <label class="block">
@@ -103,7 +103,7 @@
           let errorDetail = ref(null);
 
           const token = computed(() => {
-            return localStorage.getItem("AUTH_KEY");
+            return localStorage.getItem("ACCESS_TOKEN");
           });
 
           try {
@@ -141,7 +141,7 @@
               console.log(resbody);
 
               if (response.ok) {
-                window.localStorage.setItem("AUTH_KEY", resbody.data.attributes.access_token);
+                window.localStorage.setItem("ACCESS_TOKEN", resbody.data.attributes.access_token);
                 errorTitle.value = "Success";
                 errorDetail.value = "Your account has been updated";
                 showError.value = true;
@@ -174,7 +174,7 @@
                 }
                 const resbody = await response.json();
                 console.log(resbody);
-                window.localStorage.setItem("AUTH_KEY", resbody.data.attributes.access_token);
+                window.localStorage.setItem("ACCESS_TOKEN", resbody.data.attributes.access_token);
                 options.headers.Authorization = `Bearer ${resbody.data.attributes.access_token}`;
                 return fetchRefresh(url, options, retries - 1);
               }

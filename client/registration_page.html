@@ -46,7 +46,7 @@
                   type="text"
                   v-model="name"
                   class="block w-full mt-1 text-black placeholder-gray-500 bg-gray-100 border-transparent rounded-md focus:border-gray-500 focus:bg-white focus:ring-0"
-                  placeholder="Authy Person"
+                  placeholder=""
                 />
               </label>
               <label class="block">
@@ -130,7 +130,7 @@
               console.log(resbody);
 
               if (response.ok) {
-                window.localStorage.setItem("AUTH_KEY", resbody.data.attributes.access_token);
+                window.localStorage.setItem("ACCESS_TOKEN", resbody.data.attributes.access_token);
                 showError.value = false;
 
                 showError.value = false;
