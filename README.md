@@ -11,7 +11,7 @@
 <div align="center">
 
 <a href="">
-     <img alt="Active" src="https://img.shields.io/badge/status-early%20development-orange">
+     <img alt="Active" src="https://img.shields.io/badge/status-early%20development-orange?">
    </a>
    <a href="https://github.com/pmprosociety/authcompanion/stargazers">
      <img alt="GitHub stars" src="https://img.shields.io/github/stars/pmprosociety/authcompanion">
@@ -29,8 +29,10 @@
 
 ## Introduction
 
-To run AuthCompanion, download the source code or use git to clone this
-repository
+AuthCompanion aims to satisfy the most common identity and user management needs
+for single factor authentication.
+
+Start by downloading the source code or use git, to clone this repository
 
 ```sh
 $ git clone https://github.com/pmprosociety/authcompanion.git
@@ -45,29 +47,33 @@ you know... keep it if you're just trying things out)
 $ cp env.example .env
 ```
 
-Spin up the AuthCompanion stack by running this docker compose command:
+Spin up the AuthCompanion stack by running this
+[docker compose](https://docs.docker.com/compose/install/) command:
 
 ```sh
 $ docker-compose up
 ```
 
-First, try out the web forms for user authentication - starting with registering
-an account: http://localhost:3002/client/v1/register
+---
 
-⚠️ You'll be redirected back this repository after successfully registering,
-that's OK! We can change this later to point to your own application.
+First, try out the [Web Forms](#web-forms-for-authentication) for user
+authentication - starting with registering an account:
+http://localhost:3002/client/v1/register
 
-Next try logging in with the account you just created:
+⚠️ Note: You'll be redirected back this repository after successfully
+registering, that's OK! We can change this later to point to your application.
+
+Next, log in with the account you just created:
 http://localhost:3002/client/v1/login
 
-Lastly, try registering another user without the web forms, using the
-Authentication API on http://localhost:3002/api/v1/ instead. See the
-documentation below for clear examples 🚀.
+Lastly, experience [registering](#authregister) another user, this time without
+the web forms. Check out the [Authentication API](#authentication-api) instead.
+
+See all the documentation below for clear examples 🚀.
+
+---
 
 ## Features
-
-AuthCompanion aims to satisfy the most common identity and user management needs
-for single factor authentication.
 
 - [x] **Login and Registration:** Create an account and sign in with an email
   and password via the RESTful Authentication API.
@@ -94,16 +100,18 @@ should be completed when moving to production environments.
 
 ## Web Forms for Authentication
 
-The web forms are built using [Vue.js](https://v3.vuejs.org/) and
-[Tailwindcss](https://tailwindcss.com/) making them easily customizable for your
-specific branding and auth needs.
+The web forms for login, registration and forgot password are built using
+[Vue.js](https://v3.vuejs.org/) and [Tailwindcss](https://tailwindcss.com/) -
+making them easily customizable for your specific branding and auth needs. After
+successful login or registration, the user's JWT is made available for
+developers to use when authenticating a user into other APIs.
 
 |             Login Screen              |            Registration Screen             |
 | :-----------------------------------: | :----------------------------------------: |
 | ![Login](./.github/public/login.png)  | ![Register](./.github/public/register.png) |
 | http://localhost:3002/client/v1/login |  http://localhost:3002/client/v1/register  |
 
-Other helpful web forms include: the profile page (available at `/profile`) and
+Other helpful web forms include: the profile page, available at `/profile` and
 the forgot password page at `/recovery`.
 
 ## Authentication API
