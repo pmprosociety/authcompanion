@@ -47,7 +47,10 @@ export const login = async (ctx: any) => {
     });
 
     if (userObj.rowCount == 0) {
-      ctx.throw(Status.Forbidden, "Bad Request, Please Retry Login");
+      ctx.throw(
+        Status.Forbidden,
+        "Username or Password is Invalid, Please Retry Login",
+      );
       await db.release();
     }
 
@@ -56,7 +59,7 @@ export const login = async (ctx: any) => {
     if (!user.active) {
       ctx.throw(
         Status.Forbidden,
-        "Bad Request, Please Retry Login",
+        "Username or Password is Invalid, Please Retry Login",
       );
       await db.release();
     }
@@ -67,6 +70,10 @@ export const login = async (ctx: any) => {
       date.setTime(date.getTime() + (7 * 24 * 60 * 60 * 1000)); // TODO: Make configurable now, set to 7 days
 
       ctx.response.status = Status.OK;
+      ctx.response.headers.set(
+        "x-authc-client-origin",
+        `${config.CLIENTORIGIN}`,
+      );
 
       ctx.cookies.set("refreshToken", refreshToken, {
         httpOnly: true,
@@ -114,6 +121,5 @@ export const login = async (ctx: any) => {
         detail: err.message,
       }],
     };
-  } finally {
   }
 };

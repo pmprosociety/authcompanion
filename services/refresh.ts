@@ -83,6 +83,5 @@ export const refresh = async (ctx: any) => {
         detail: err.message,
       }],
     };
-  } finally {
   }
 };

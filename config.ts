@@ -1,3 +1,4 @@
+// See env.example for documenation of the configs.
 // All environment variables go here
 import "https://deno.land/x/dotenv@v2.0.0/load.ts"; // Autoload config file
 
@@ -52,6 +53,10 @@ const RECOVERYURL = Deno.env.get("RECOVERY_REDIRECT_URL");
 const WEBHOOKURL = Deno.env.get("WEBHOOK_URL");
 const WEBHOOKSECRET = Deno.env.get("WEBHOOK_SECRET");
 
+//Use AuthC in 'Client Mode' which makes available the UIs for Login, Registration,ect.
+const CLIENTMODE = Deno.env.get("CLIENT_MODE");
+const CLIENTORIGIN = Deno.env.get("CLIENT_ORIGIN");
+
 export default {
   AUTHPORT,
   ORIGIN,
@@ -74,4 +79,6 @@ export default {
   RECOVERYURL,
   WEBHOOKURL,
   WEBHOOKSECRET,
+  CLIENTMODE,
+  CLIENTORIGIN,
 };

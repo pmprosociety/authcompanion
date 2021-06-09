@@ -1,43 +1,32 @@
 import { Application } from "./deps.ts";
-// middleware
-import notFound from "./middlewares/notFound.ts";
-// logging
-import logger from "./middlewares/logger.ts";
-// routes
-import index from "./routes/index.ts";
 import config from "./config.ts";
+
+// app middleware
+import notFound from "./middlewares/notFound.ts";
+import logger from "./middlewares/logger.ts";
+import cors from "./middlewares/cors.ts";
+
+// app routes
+import serverIndex from "./routes/index.server.ts";
+import clientIndex from "./routes/index.client.ts";
 
 const app = new Application();
 
 app.use(logger.logger);
 app.use(logger.responseTime);
+app.use(cors);
 
-//Enable CORS
-// @ts-ignore: Implementing ts features at later date
-app.use((ctx, next) => {
-  ctx.response.headers.set("Access-Control-Allow-Origin", config.ORIGIN ?? "*");
-  ctx.response.headers.set("Access-Control-Allow-Credentials", "true");
-  ctx.response.headers.set(
-    "Access-Control-Allow-Headers",
-    "Content-type,Authorization,Cookie",
-  );
+// API Server Routes
+app.use(serverIndex.routes());
+app.use(serverIndex.allowedMethods());
 
-  return next();
-});
-
-app.use(index.routes());
-app.use(index.allowedMethods());
+// Client Routes
+if (config.CLIENTMODE?.toLowerCase() !== "false") {
+  app.use(clientIndex.routes());
+  app.use(clientIndex.allowedMethods());
+}
 
 // General 404 Error Page
 app.use(notFound);
-
-//Setup DB
-// try {
-//   await db.connect();
-// } catch (e) {
-//   log.error("DB Connection failed - shutting down");
-//   log.error(e);
-//   Deno.exit(1);
-// }
 
 export default app;

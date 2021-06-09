@@ -6,6 +6,7 @@ import { db } from "../db/db.ts";
 import log from "../helpers/log.ts";
 import { superstruct } from "../deps.ts";
 import { sendHook } from "./webhook.ts";
+import config from "../config.ts";
 
 export const registration = async (ctx: any) => {
   try {
@@ -70,6 +71,10 @@ export const registration = async (ctx: any) => {
     const refreshToken = await makeRefreshtoken(userObj);
 
     ctx.response.status = Status.Created;
+    ctx.response.headers.set(
+      "x-authc-client-origin",
+      `${config.CLIENTORIGIN}`,
+    );
     ctx.cookies.set("refreshToken", refreshToken, {
       httpOnly: true,
       expires: new Date("2022-01-01T00:00:00+00:00"),

@@ -29,7 +29,7 @@ await Promise.any(
   ],
 );
 
-log.info("🛑 Stopping AuthCompanion");
+log.info(` 🛑 Stopping AuthCompanion`);
 
 // In order to close the sever...
 controller.abort();
@@ -37,5 +37,6 @@ controller.abort();
 // Listen will stop listening for requests and the promise will resolve...
 await server;
 
-log.info("Good bye 👋 ");
+log.info(` Good bye 👋`);
+
 Deno.exit();

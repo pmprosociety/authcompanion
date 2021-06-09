@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en" hidden>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="shortcut icon" href="https://unpkg.com/favicon.ico" />
+    <script src="https://unpkg.com/vue@3.0.11"></script>
+    <link rel="stylesheet" href="https://unpkg.com/@tailwindcss/forms/dist/forms.min.css" />
+    <script type="module" src="https://cdn.skypack.dev/twind/shim"></script>
+    <link rel="stylesheet" href="https://rsms.me/inter/inter.css" />
+    <style>
+      html {
+        font-family: "Inter var", sans-serif;
+      }
+    </style>
+    <title>authcompanion</title>
+  </head>
+
+  <body class="flex flex-col h-full bg-gray-50">
+    <div id="app" class="">
+      <div class="w-full my-8 text-center">
+        <p>COMPANY LOGO</p>
+      </div>
+      <div class="w-full my-8 text-center">
+        <p class="py-3 text-2xl font-semibold text-gray-700">Please update your account</p>
+      </div>
+      <div class="w-full max-w-md px-8 py-6 mx-auto mt-8 bg-white rounded shadow-md">
+        <div class="px-4 sm:px-0">
+          <div class="text-gray-400 rounded-lg">
+            <!-- Toast Notification -->
+            <div v-if="showError">
+              <div class="pb-4">
+                <div class="inline-flex items-center p-2 text-sm leading-none text-red-600 bg-white rounded-full shadow">
+                  <span class="inline-flex px-2">{{ errorDetail }}</span>
+                </div>
+              </div>
+            </div>
+            <!-- Form -->
+            <div class="grid max-w-md grid-cols-1 gap-6">
+              <label class="block">
+                <span class="text-gray-700">Full Name</span>
+                <input
+                  type="text"
+                  v-model="name"
+                  class="block w-full mt-1 text-black placeholder-gray-500 bg-gray-100 border-transparent rounded-md focus:border-gray-500 focus:bg-white focus:ring-0"
+                  placeholder=""
+                />
+              </label>
+              <label class="block">
+                <span class="text-gray-700">Email</span>
+                <input
+                  type="text"
+                  v-model="email"
+                  class="block w-full mt-1 text-black placeholder-gray-500 bg-gray-100 border-transparent rounded-md focus:border-gray-500 focus:bg-white focus:ring-0"
+                  placeholder="hello@example.com"
+                />
+              </label>
+              <label class="block">
+                <span class="text-gray-700"> New Password</span>
+                <input
+                  type="password"
+                  v-model="password"
+                  class="block w-full mt-1 text-black placeholder-gray-500 bg-gray-100 border-transparent rounded-md focus:border-gray-500 focus:bg-white focus:ring-0"
+                  placeholder=""
+                />
+              </label>
+              <label class="block">
+                <span class="text-gray-700"> Confirm Password</span>
+                <input
+                  v-model="confirmPassword"
+                  type="password"
+                  class="block w-full mt-1 text-black placeholder-gray-500 bg-gray-100 border-transparent rounded-md focus:border-gray-500 focus:bg-white focus:ring-0"
+                  placeholder=""
+                />
+              </label>
+              <button @click="submit" class="block w-full px-6 py-3 mt-3 text-lg font-semibold text-white bg-gray-800 rounded-lg shadow-xl hover:text-white hover:bg-black">
+                > Update User
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="flex justify-end">
+        <div class="m-4 text-xs text-gray-400">
+          Powered by <span class="underline"> <a href="https://github.com/pmprosociety/authcompanion">AuthCompanion</a> </span>
+        </div>
+      </div>
+    </div>
+    <!-- scripts -->
+    <script type="module">
+      import jwtDecode from "https://cdn.skypack.dev/jwt-decode";
+
+      const { ref, computed } = Vue;
+      const app = Vue.createApp({
+        setup() {
+          const name = ref("");
+          const email = ref("");
+          const password = ref("");
+          const confirmPassword = ref("");
+
+          const showError = ref(false);
+          let errorTitle = ref(null);
+          let errorDetail = ref(null);
+
+          const token = computed(() => {
+            return localStorage.getItem("ACCESS_TOKEN");
+          });
+
+          try {
+            var decoded = jwtDecode(token.value);
+            console.log(decoded);
+
+            email.value = decoded.email;
+            name.value = decoded.name;
+          } catch (e) {
+            console.log(e);
+          }
+
+          const submit = async () => {
+            try {
+              if (password.value !== confirmPassword.value) {
+                showError.value = true;
+                errorTitle.value = "Validation Error";
+                errorDetail.value = "Passwords do not match, please try again";
+                return;
+              }
+              let response = await fetchRefresh("http://localhost:3002/api/v1/auth/users/me", {
+                method: "POST",
+                body: JSON.stringify({
+                  name: name.value,
+                  email: email.value,
+                  password: password.value,
+                }),
+                headers: {
+                  Authorization: `Bearer ${token.value}`,
+                  "content-type": "application/json",
+                },
+              });
+
+              const resbody = await response.json();
+              console.log(resbody);
+
+              if (response.ok) {
+                window.localStorage.setItem("ACCESS_TOKEN", resbody.data.attributes.access_token);
+                errorTitle.value = "Success";
+                errorDetail.value = "Your account has been updated";
+                showError.value = true;
+              } else {
+                showError.value = true;
+                errorTitle.value = resbody.errors[0].title;
+                errorDetail.value = resbody.errors[0].detail;
+              }
+            } catch (e) {
+              console.log(e);
+              showError.value = true;
+              errorTitle.value = "Error";
+              errorDetail.value = "There was an issue connecting to authcompanion";
+            }
+          };
+
+          const fetchRefresh = async (url, options = {}, retries = 1) => {
+            return fetch(url, options).then(async (res) => {
+              if (res.ok) {
+                return res;
+              }
+              if (res.status === 401) {
+                console.log("refreshing token");
+                let response = await fetch("http://localhost:3002/api/v1/auth/refresh", {
+                  method: "POST",
+                  credentials: "include",
+                });
+                if (!response.ok) {
+                  return res;
+                }
+                const resbody = await response.json();
+                console.log(resbody);
+                window.localStorage.setItem("ACCESS_TOKEN", resbody.data.attributes.access_token);
+                options.headers.Authorization = `Bearer ${resbody.data.attributes.access_token}`;
+                return fetchRefresh(url, options, retries - 1);
+              }
+              if (retries > 0) {
+                return fetchRefresh(url, options, retries - 1);
+              }
+              return res;
+            });
+          };
+
+          // expose to template
+          return {
+            showError,
+            errorTitle,
+            errorDetail,
+            submit,
+            name,
+            email,
+            password,
+            confirmPassword,
+          };
+        },
+      });
+      app.mount("#app");
+    </script>
+  </body>
+</html>

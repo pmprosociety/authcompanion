@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en" hidden>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="shortcut icon" href="https://unpkg.com/favicon.ico" />
+    <script src="https://unpkg.com/vue@3.0.11"></script>
+    <link rel="stylesheet" href="https://unpkg.com/@tailwindcss/forms/dist/forms.min.css" />
+    <script type="module" src="https://cdn.skypack.dev/twind/shim"></script>
+    <link rel="stylesheet" href="https://rsms.me/inter/inter.css" />
+    <style>
+      html {
+        font-family: "Inter var", sans-serif;
+      }
+    </style>
+    <title>authcompanion</title>
+  </head>
+
+  <body class="flex flex-col h-full bg-gray-50">
+    <div id="app" class="">
+      <div class="w-full my-8 text-center">
+        <p>COMPANY LOGO</p>
+      </div>
+      <div class="w-full my-8 text-center">
+        <p class="py-3 text-2xl font-semibold text-gray-700">Recover your account</p>
+        <p class="py-3 text-sm font-semibold text-gray-700">An email will be sent to your address containing a link to log in.</p>
+      </div>
+      <div class="w-full max-w-md px-8 py-6 mx-auto mt-8 bg-white rounded shadow-md">
+        <div class="px-4 sm:px-0">
+          <div class="text-gray-400 rounded-lg">
+            <!-- Toast Notification -->
+            <div v-if="showError">
+              <div class="pb-4">
+                <div class="inline-flex items-center p-2 text-sm leading-none text-green-600 bg-white rounded-full shadow">
+                  <span class="inline-flex px-2">{{ errorDetail }}</span>
+                </div>
+              </div>
+            </div>
+            <!-- Form -->
+            <div class="grid max-w-md grid-cols-1 gap-6">
+              <label class="block">
+                <span class="text-gray-700">Email</span>
+                <input
+                  type="email"
+                  v-model="email"
+                  class="block w-full mt-1 text-black placeholder-gray-500 bg-gray-100 border-transparent rounded-md focus:border-gray-500 focus:bg-white focus:ring-0"
+                  placeholder="hello@example.com"
+                />
+              </label>
+              <button
+                type="submit"
+                class="block w-full px-6 py-3 mt-3 text-lg font-semibold text-white bg-gray-800 rounded-lg shadow-xl hover:text-white hover:bg-black"
+                @click="submit"
+                @keyup.enter="submit"
+              >
+                > Submit
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="flex justify-end">
+        <div class="m-4 text-xs text-gray-400">
+          Powered by <span class="underline"> <a href="https://github.com/pmprosociety/authcompanion">AuthCompanion</a> </span>
+        </div>
+      </div>
+    </div>
+    <!-- scripts -->
+    <script>
+      const { ref, computed } = Vue;
+      const app = Vue.createApp({
+        setup() {
+          const email = ref("");
+
+          let showError = ref(false);
+          let errorTitle = ref(null);
+          let errorDetail = ref(null);
+
+          const submit = async () => {
+            try {
+              let response = await fetch("http://localhost:3002/api/v1/auth/recovery", {
+                method: "POST",
+                credentials: "include",
+                body: JSON.stringify({
+                  email: email.value,
+                }),
+                headers: {
+                  "content-type": "application/json",
+                },
+              });
+
+              const resbody = await response.json();
+              console.log(resbody);
+
+              if (response.ok) {
+                errorTitle.value = "Success";
+                errorDetail.value = "A recovery email has been sent to the address provided";
+                showError.value = true;
+              }
+            } catch (e) {
+              showError.value = true;
+
+              errorTitle.value = "Error";
+              errorDetail.value = "There was an issue connecting to authcompanion";
+            }
+          };
+          // expose to template
+          return {
+            showError,
+            errorTitle,
+            errorDetail,
+            submit,
+            email,
+          };
+        },
+      });
+      app.mount("#app");
+    </script>
+  </body>
+</html>

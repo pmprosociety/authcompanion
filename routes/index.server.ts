@@ -1,4 +1,5 @@
 import { Router } from "../deps.ts";
+
 import { login } from "../services/login.ts";
 import { refresh } from "../services/refresh.ts";
 import { registration } from "../services/registration.ts";
@@ -9,7 +10,7 @@ import { logout } from "../services/logout.ts";
 
 import authorize from "../middlewares/authorize.ts";
 
-//API Path
+//API Server Path
 const pathPrefix = "/api/v1/";
 
 const router = new Router({ prefix: pathPrefix });
