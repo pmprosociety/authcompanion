@@ -5,6 +5,7 @@ import { makeAccesstoken, makeRefreshtoken } from "../helpers/jwtutils.ts";
 import { db } from "../db/db.ts";
 import log from "../helpers/log.ts";
 import { superstruct } from "../deps.ts";
+import { isEmail } from "../helpers/validations.ts";
 import { sendHook } from "./webhook.ts";
 import config from "../config.ts";
 
@@ -24,9 +25,12 @@ export const registration = async (ctx: any) => {
     }
 
     // validate request body against a schmea
+    const emailValidate = () =>
+      superstruct.define("email", (value: any) => isEmail(value));
+
     const registrationSchema = superstruct.object({
       name: superstruct.string(),
-      email: superstruct.string(),
+      email: emailValidate(),
       password: superstruct.string(),
     });
 

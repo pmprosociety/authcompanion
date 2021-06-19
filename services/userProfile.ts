@@ -6,6 +6,7 @@ import { db } from "../db/db.ts";
 import log from "../helpers/log.ts";
 import config from "../config.ts";
 import { superstruct } from "../deps.ts";
+import { isEmail } from "../helpers/validations.ts";
 import { sendHook } from "./webhook.ts";
 
 export const userProfile = async (ctx: any) => {
@@ -24,9 +25,13 @@ export const userProfile = async (ctx: any) => {
     }
 
     // validate request body against a schmea
+
+    const emailValidate = () =>
+      superstruct.define("email", (value: any) => isEmail(value));
+
     const updateSchema = superstruct.object({
       name: superstruct.string(),
-      email: superstruct.string(),
+      email: emailValidate(),
       password: superstruct.optional(superstruct.string()),
     });
 
