@@ -1,4 +1,4 @@
-FROM hayd/alpine-deno:1.10.2
+FROM denoland/deno:alpine-1.11.1
 
 EXPOSE 3002
 
