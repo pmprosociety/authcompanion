@@ -30,7 +30,12 @@
 ## Introduction
 
 AuthCompanion aims to satisfy the most common identity and user management needs
-for single factor authentication.
+for single factor authentication. It can:
+
+- Securely handle user registration, login, logout, and account recovery.
+-  Generate and validate [JWTs](https://jwt.io/) desinged for authenticating users into your application APIs. 
+
+## Get Started
 
 Start by downloading the source code or use git, to clone this repository
 
@@ -47,7 +52,7 @@ you know... keep it if you're just trying things out)
 $ cp env.example .env
 ```
 
-Spin up the AuthCompanion stack by running this
+Spin up the AuthCompanion stack locally by running this
 [docker compose](https://docs.docker.com/compose/install/) command:
 
 ```sh
@@ -56,47 +61,51 @@ $ docker-compose up
 
 ---
 
-First, try out the [Web Forms](#web-forms-for-authentication) for user
-authentication - starting with registering an account:
+### 1. Create a user
+AuthC comes with a number of pre-built [Web Forms](#web-forms-for-authentication) to help you quickly integrate user auth into your web application. 
+
+Start first with registering an account using this web form:
 http://localhost:3002/client/v1/register
 
-⚠️ Note: You'll be redirected back this repository after successfully
+⚠️ **Note:** You'll be redirected back this repository after successfully
 registering, that's OK! We can change this later to point to your application.
 
-Next, log in with the account you just created:
+### 2. Login as a user
+
+Next, log in with the account you just created using your email and password at this web form:
 http://localhost:3002/client/v1/login
 
-Lastly, experience [registering](#authregister) another user, this time without
-the web forms. Check out the [Authentication API](#authentication-api) instead.
 
-See all the documentation below for clear examples 🚀.
+Lastly, check out the [Authentication API](#authentication-api) for how your application can manage users and see the documentation below for clear examples 🚀.
 
 ---
 
 ## Features
 
-- [x] **Login and Registration:** Create an account and sign in with an email
-  and password via the RESTful Authentication API.
-- [x] **Profile and Credentials Management:** Update the password and profile
-  information of your users - account information is stored in a Postgres
-  database.
-- [x] **Account Recovery:** Restore a user's access to their account using the
-  **Forgot Password** flow. This flow sends a special link via email for
-  recovering an account quickly.
-- [x] **Hooks:** Receive notifications via a webhook after a user has: logged
-  in, registered, or updated their account. Hooks are used to trigger your
-  integrations each time a user performs an authentication action, like logging
-  in.
-- [x] **Token Lifecycle & Logout:** Keep a user's access token fresh while they
-  are using your application. Then, when a user is done in your app, securely
-  log them out.
 - [x] **Web Forms:** Use pre-built web forms for your application users to: log
   in with their credentials, register an account, update their profile, and
   issue forgotten passwords.
 
-**Note:** the default configuration strives to be reasonable and sane for
-gettings started with user authentication easily - extra hardening of the server
-should be completed when moving to production environments.
+- [x] **Authentication API:** Control and mange user accounts and thier sessions via the RESTful Authentication API.
+
+- [x] **Profile and Credentials Management:** Update the password and profile
+  information of your users - account information is stored in a Postgres
+  database.
+
+- [x] **Account Recovery:** Restore a user's access to their account using the
+  **Forgot Password** flow which sends a special link via email for helping users quickly recovery their account.
+
+- [x] **Hooks:** Receive notifications via a webhook after a user has: logged
+  in, registered, or updated their account. Hooks are used to trigger your
+  integrations each time a user performs an authentication action, like logging
+  in.
+
+- [x] **Token Lifecycle & Logout:** Keep a user's access token fresh while they
+  are using your application. Then, when a user is done in your app, securely
+  log them out.
+
+The default AuthC server configuration strives to be reasonable and sane for
+gettings started with user authentication easily.
 
 ## Web Forms for Authentication
 
@@ -113,6 +122,8 @@ developers to use when authenticating a user into other APIs.
 
 Other helpful web forms include: the profile page, available at `/profile` and
 the forgot password page at `/recovery`.
+
+---
 
 ## Authentication API
 
